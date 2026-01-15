@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dagskoll - Vecka, datum, namnsdag</title>
+    <meta name="description" content="Snabb överblick över veckonummer, datum, namnsdag, soltider och nyheter">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0f14">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0f14;
+            --card: #1a1a22;
+            --card-hover: #22222d;
+            --text: #e8e8ed;
+            --muted: #6b6b7a;
+            --blue: #4e8cff;
+            --orange: #ff9f43;
+            --green: #26de81;
+            --pink: #ff6b9d;
+            --red: #ff6b6b;
+            --border: #2a2a35;
+        }
+        
+        [data-theme="light"] {
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --card-hover: #f0f0f2;
+            --text: #1a1a1a;
+            --muted: #6b6b7a;
+            --blue: #2563eb;
+            --orange: #ea580c;
+            --green: #16a34a;
+            --pink: #db2777;
+            --red: #dc2626;
+            --border: #e0e0e5;
+        }
+        
+        [data-theme="light"] .week-widget {
+            background: linear-gradient(135deg, #dbeafe 0%, #ffffff 100%);
+        }
+        
+        [data-theme="light"] .date-widget {
+            background: linear-gradient(135deg, #fce7f3 0%, #ffffff 100%);
+        }
+        
+        [data-theme="light"] .nameday-widget {
+            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
+        }
+        
+        [data-theme="light"] .weather-widget {
+            background: linear-gradient(135deg, #cffafe 0%, #ffffff 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text);
+        }
+        
+        .logo span {
+            color: var(--blue);
+        }
+        
+        .header-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            border-color: var(--blue);
+            background: var(--card-hover);
+        }
+        
+        /* Dashboard Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .widget {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+        
+        .widget:hover {
+            background: var(--card-hover);
+        }
+        
+        .widget-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .widget-label .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        /* Week Widget */
+        .week-widget {
+            grid-column: span 2;
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1e3a5f 0%, #1a1a22 100%);
+        }
+        
+        .week-widget .dot { background: var(--blue); }
+        
+        .week-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--blue);
+            line-height: 1;
+        }
+        
+        .week-text {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* Date Widget */
+        .date-widget {
+            grid-column: span 4;
+            background: linear-gradient(135deg, #2d1f3d 0%, #1a1a22 100%);
+        }
+        
+        .date-widget .dot { background: var(--pink); }
+        
+        .date-main {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .date-sub {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+        
+        /* Nameday Widget */
+        .nameday-widget {
+            grid-column: span 4;
+            background: linear-gradient(135deg, #1f2d1f 0%, #1a1a22 100%);
+        }
+        
+        .nameday-widget .dot { background: var(--green); }
+        
+        .nameday-names {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--green);
+        }
+        
+        .nameday-tomorrow {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* Sun Widget */
+        .sun-widget {
+            grid-column: span 3;
+        }
+        
+        .sun-widget .dot { background: var(--orange); }
+        
+        /* Weather Widget */
+        .weather-widget {
+            grid-column: span 3;
+            background: linear-gradient(135deg, #1a3a4a 0%, #1a1a22 100%);
+        }
+        
+        .weather-widget .dot { background: #4ecdc4; }
+        
+        .location-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .location-selector select {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+        }
+        
+        .location-selector select:hover,
+        .location-selector select:focus {
+            border-color: #4ecdc4;
+            outline: none;
+        }
+        
+        .location-selector button {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .location-selector button:hover {
+            border-color: #4ecdc4;
+            background: var(--card-hover);
+        }
+        
+        .location-selector button.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .weather-icon {
+            font-size: 2.5rem;
+        }
+        
+        .weather-temp {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4ecdc4;
+        }
+        
+        .weather-desc {
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+        }
+        
+        .weather-details {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .weather-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        
+        .weather-detail-label {
+            font-size: 0.65rem;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+        
+        .weather-detail-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        
+        .sun-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+        
+        .sun-item { text-align: center; }
+        
+        .sun-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .sun-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .sun-label {
+            font-size: 0.65rem;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+        
+        .daylight-bar {
+            margin-top: 1rem;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .daylight-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--orange), #ffd93d);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+        
+        .daylight-text {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* Stats Widget */
+        .stats-widget {
+            grid-column: span 3;
+        }
+        
+        .stats-widget .dot { background: var(--pink); }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .stat-row:last-child { border-bottom: none; }
+        
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+        }
+        
+        /* Holidays Widget */
+        .holidays-widget {
+            grid-column: span 3;
+        }
+        
+        .holidays-widget .dot { background: var(--red); }
+        
+        .holiday-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+        
+        .holiday-item:last-child { border-bottom: none; }
+        
+        .holiday-name {
+            color: var(--text);
+        }
+        
+        .holiday-date {
+            color: var(--muted);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+        }
+        
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+        
+        .section-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .section-nav button {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .section-nav button:hover {
+            background: var(--card-hover);
+            border-color: var(--blue);
+        }
+        
+        .section-nav button.active {
+            background: var(--blue);
+            border-color: var(--blue);
+        }
+        
+        /* Year Calendar */
+        .year-calendar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        
+        .month-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+        }
+        
+        .month-card.current {
+            border-color: var(--blue);
+            box-shadow: 0 0 20px rgba(78, 140, 255, 0.1);
+        }
+        
+        .month-name {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        
+        .month-card.current .month-name {
+            color: var(--blue);
+        }
+        
+        .weekday-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-bottom: 4px;
+        }
+        
+        .weekday-header span {
+            font-size: 0.55rem;
+            color: var(--muted);
+            text-align: center;
+        }
+        
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+        
+        .month-with-weeks {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 4px;
+        }
+        
+        .week-numbers {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 0;
+        }
+        
+        .week-num {
+            font-size: 0.55rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: calc((100% - 10px) / 6);
+            min-height: 18px;
+            opacity: 0.7;
+        }
+        
+        .month-days {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            color: var(--text);
+        }
+        
+        .day-cell.empty {
+            visibility: hidden;
+        }
+        
+        .day-cell.today {
+            background: var(--blue);
+            color: white;
+            font-weight: 700;
+        }
+        
+        .day-cell.holiday {
+            color: var(--red);
+        }
+        
+        .day-cell.sunday {
+            color: var(--red);
+            opacity: 0.7;
+        }
+        
+        .day-cell.weekend {
+            opacity: 0.6;
+        }
+        
+        /* News Widget */
+        .news-section {
+            margin-top: 2rem;
+        }
+        
+        /* History Section */
+        .history-section {
+            margin-top: 2rem;
+        }
+        
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .history-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .history-card:hover {
+            background: var(--card-hover);
+            border-color: var(--orange);
+        }
+        
+        .history-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .history-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--orange);
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--text);
+        }
+        
+        .history-filter {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .history-filter:hover {
+            color: var(--text);
+            border-color: var(--orange);
+        }
+        
+        .history-filter.active {
+            background: var(--orange);
+            border-color: var(--orange);
+            color: white;
+        }
+        
+        @media (max-width: 700px) {
+            .history-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .news-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .news-card:hover {
+            background: var(--card-hover);
+            border-color: var(--blue);
+        }
+        
+        .news-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .news-card a:hover .news-title {
+            color: var(--blue);
+        }
+        
+        .news-filter {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .news-filter:hover {
+            color: var(--text);
+            border-color: var(--blue);
+        }
+        
+        .news-filter.active {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: white;
+        }
+        
+        .news-source {
+            font-size: 0.65rem;
+            color: var(--blue);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .news-title {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .news-time {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.75rem;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            font-size: 0.7rem;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .year-calendar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 700px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .week-widget,
+            .date-widget,
+            .nameday-widget,
+            .sun-widget,
+            .weather-widget,
+            .stats-widget,
+            .holidays-widget {
+                grid-column: span 2;
+            }
+            .week-widget {
+                grid-row: span 1;
+                padding: 2rem;
+            }
+            .week-number {
+                font-size: 3.5rem;
+            }
+            .year-calendar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .year-calendar {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="site-header">
+            <div class="logo">dags<span>koll</span></div>
+            <div class="header-right">
+                <button id="theme-toggle" class="theme-toggle" title="Byt tema">🌙</button>
+                <div class="header-time" id="clock">--:--:--</div>
+            </div>
+        </header>
+        
+        <div class="dashboard">
+            <div class="widget week-widget">
+                <div class="widget-label"><span class="dot"></span>Vecka</div>
+                <div class="week-number" id="week-number">--</div>
+                <div class="week-text" id="week-text">av 52</div>
+            </div>
+            
+            <div class="widget date-widget">
+                <div class="widget-label"><span class="dot"></span>Idag</div>
+                <div class="date-main" id="date-main">Laddar...</div>
+                <div class="date-sub" id="date-sub"></div>
+            </div>
+            
+            <div class="widget nameday-widget">
+                <div class="widget-label"><span class="dot"></span>Namnsdag</div>
+                <div class="nameday-names" id="nameday">Laddar...</div>
+                <div class="nameday-tomorrow" id="nameday-tomorrow"></div>
+            </div>
+            
+            <div class="widget sun-widget">
+                <div class="widget-label"><span class="dot"></span>Sol</div>
+                <div class="sun-times">
+                    <div class="sun-item">
+                        <div class="sun-icon">☀️</div>
+                        <div class="sun-time" id="sunrise">--:--</div>
+                        <div class="sun-label">Upp</div>
+                    </div>
+                    <div class="sun-item">
+                        <div class="sun-icon">🌙</div>
+                        <div class="sun-time" id="sunset">--:--</div>
+                        <div class="sun-label">Ner</div>
+                    </div>
+                </div>
+                <div class="daylight-bar">
+                    <div class="daylight-fill" id="daylight-bar"></div>
+                </div>
+                <div class="daylight-text" id="daylight-text">-- dagsljus</div>
+            </div>
+            
+            <div class="widget weather-widget">
+                <div class="widget-label"><span class="dot"></span>Väder</div>
+                <div class="location-selector">
+                    <select id="city-select">
+                        <option value="stockholm">Stockholm</option>
+                        <option value="goteborg">Göteborg</option>
+                        <option value="malmo">Malmö</option>
+                        <option value="uppsala">Uppsala</option>
+                        <option value="linkoping">Linköping</option>
+                        <option value="orebro">Örebro</option>
+                        <option value="vasteras">Västerås</option>
+                        <option value="norrkoping">Norrköping</option>
+                        <option value="jonkoping">Jönköping</option>
+                        <option value="umea">Umeå</option>
+                        <option value="lulea">Luleå</option>
+                        <option value="sundsvall">Sundsvall</option>
+                        <option value="karlstad">Karlstad</option>
+                        <option value="gavle">Gävle</option>
+                        <option value="vaxjo">Växjö</option>
+                    </select>
+                    <button id="geolocation-btn" title="Använd min position">📍</button>
+                </div>
+                <div class="weather-main">
+                    <div class="weather-icon" id="weather-icon">🌡️</div>
+                    <div class="weather-temp" id="weather-temp">--°</div>
+                </div>
+                <div class="weather-desc" id="weather-desc">Laddar...</div>
+                <div class="weather-details">
+                    <div class="weather-detail">
+                        <span class="weather-detail-label">Vind</span>
+                        <span class="weather-detail-value" id="weather-wind">-- m/s</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span class="weather-detail-label">Nederbörd</span>
+                        <span class="weather-detail-value" id="weather-precip">-- mm</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="widget stats-widget">
+                <div class="widget-label"><span class="dot"></span>År <span id="current-year">2025</span></div>
+                <div class="stat-row">
+                    <span class="stat-label">Dag</span>
+                    <span class="stat-value" id="day-of-year">-- / 365</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Kvar</span>
+                    <span class="stat-value" id="days-left">--</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Progress</span>
+                    <span class="stat-value" id="year-progress">--%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-header">
+            <h2 class="section-title">Årskalender <span id="calendar-year">2025</span></h2>
+            <div class="section-nav">
+                <button id="prev-year">← Förra</button>
+                <button id="current-year-btn" class="active">I år</button>
+                <button id="next-year">Nästa →</button>
+            </div>
+        </div>
+        
+        <div class="year-calendar" id="year-calendar">
+            <!-- Generated by JS -->
+        </div>
+        
+        <div class="history-section">
+            <div class="section-header">
+                <h2 class="section-title">Denna dag i historien</h2>
+                <div class="section-nav">
+                    <button class="history-filter active" data-type="events">Händelser</button>
+                    <button class="history-filter" data-type="births">Födda</button>
+                    <button class="history-filter" data-type="deaths">Döda</button>
+                </div>
+            </div>
+            <div class="history-grid" id="history-grid">
+                <div class="history-card">
+                    <div class="history-year">⏳</div>
+                    <div class="history-text">Laddar historiska händelser...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="news-section">
+            <div class="section-header">
+                <h2 class="section-title">Nyheter</h2>
+                <div class="section-nav">
+                    <button class="news-filter active" data-source="all">Alla</button>
+                    <button class="news-filter" data-source="svt">SVT</button>
+                    <button class="news-filter" data-source="sr">SR</button>
+                    <button class="news-filter" data-source="feber">Feber</button>
+                </div>
+            </div>
+            <div class="news-grid" id="news-grid">
+                <div class="news-card">
+                    <div class="news-source">Laddar</div>
+                    <div class="news-title">Hämtar nyheter...</div>
+                    <div class="news-time">⏳</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            Dagskoll — Snabb. Ren. Svensk.
+        </footer>
+    </div>
+    
+    <script>
+        // Swedish namedays data (complete for all 366 days)
+        const namedays = {
+            "01-01": ["Nyårsdagen"],
+            "01-02": ["Svea", "Sverker"],
+            "01-03": ["Alfred", "Alfrida"],
+            "01-04": ["Rut", "Ritva"],
+            "01-05": ["Hanna", "Hannele"],
+            "01-06": ["Kasper", "Melker", "Baltsar"],
+            "01-07": ["August", "Augusta"],
+            "01-08": ["Erland", "Erlendur"],
+            "01-09": ["Gunnar", "Gunder"],
+            "01-10": ["Sigurd", "Sigbritt"],
+            "01-11": ["Jan", "Jansen"],
+            "01-12": ["Frideborg", "Fridolf"],
+            "01-13": ["Knut"],
+            "01-14": ["Felix", "Felicia"],
+            "01-15": ["Laura", "Lorentz"],
+            "01-16": ["Hjalmar", "Helmer"],
+            "01-17": ["Anton", "Tony"],
+            "01-18": ["Hilda", "Hildur"],
+            "01-19": ["Henrik", "Henry"],
+            "01-20": ["Fabian", "Sebastian"],
+            "01-21": ["Agnes", "Agneta"],
+            "01-22": ["Vincent", "Viktor"],
+            "01-23": ["Frej", "Freja"],
+            "01-24": ["Erika", "Eira"],
+            "01-25": ["Paul", "Pål"],
+            "01-26": ["Bodil", "Boel"],
+            "01-27": ["Göte", "Göta"],
+            "01-28": ["Karl", "Karla"],
+            "01-29": ["Diana", "Diana"],
+            "01-30": ["Gunilla", "Gunhild"],
+            "01-31": ["Ivar", "Joar"],
+            "02-01": ["Max", "Maximilian"],
+            "02-02": ["Kyndelsmässodagen"],
+            "02-03": ["Disa", "Hjördis"],
+            "02-04": ["Ansgar", "Anselm"],
+            "02-05": ["Agata", "Agda"],
+            "02-06": ["Dorotea", "Doris"],
+            "02-07": ["Rikard", "Dick"],
+            "02-08": ["Berta", "Bert"],
+            "02-09": ["Fanny", "Franciska"],
+            "02-10": ["Egon", "Egil"],
+            "02-11": ["Yngve", "Inge"],
+            "02-12": ["Evelina", "Evy"],
+            "02-13": ["Agne", "Ove"],
+            "02-14": ["Valentin", "Tina"],
+            "02-15": ["Sigfrid", "Sigbritt"],
+            "02-16": ["Julia", "Juliana"],
+            "02-17": ["Alexandra", "Sandra"],
+            "02-18": ["Frida", "Fritiof"],
+            "02-19": ["Gabriella", "Ella"],
+            "02-20": ["Vivianne", "Viveka"],
+            "02-21": ["Hilding", "Hulda"],
+            "02-22": ["Pia", "Marina"],
+            "02-23": ["Torsten", "Torun"],
+            "02-24": ["Mattias", "Mats"],
+            "02-25": ["Sigvard", "Sivert"],
+            "02-26": ["Torgny", "Torkel"],
+            "02-27": ["Lage", "Laila"],
+            "02-28": ["Maria", "Maja"],
+            "02-29": ["Skottdagen"],
+            "03-01": ["Albin", "Elvira"],
+            "03-02": ["Ernst", "Erna"],
+            "03-03": ["Gunborg", "Gunvor"],
+            "03-04": ["Adrian", "Adriana"],
+            "03-05": ["Tora", "Tove"],
+            "03-06": ["Ebba", "Ebbe"],
+            "03-07": ["Camilla", "Isadora"],
+            "03-08": ["Siv", "Saga"],
+            "03-09": ["Torbjörn", "Torleif"],
+            "03-10": ["Edla", "Ada"],
+            "03-11": ["Edvin", "Egon"],
+            "03-12": ["Viktoria", "Viktor"],
+            "03-13": ["Greger", "Greta"],
+            "03-14": ["Matilda", "Maud"],
+            "03-15": ["Kristoffer", "Christel"],
+            "03-16": ["Herbert", "Gilbert"],
+            "03-17": ["Gertrud", "Görel"],
+            "03-18": ["Edvard", "Edmund"],
+            "03-19": ["Josef", "Josefina"],
+            "03-20": ["Joakim", "Kim"],
+            "03-21": ["Bengt", "Benny"],
+            "03-22": ["Kennet", "Kent"],
+            "03-23": ["Gerda", "Gerd"],
+            "03-24": ["Gabriel", "Rafael"],
+            "03-25": ["Marie", "Bebådelsedag"],
+            "03-26": ["Emanuel", "Manne"],
+            "03-27": ["Rudolf", "Ralf"],
+            "03-28": ["Malkolm", "Morgan"],
+            "03-29": ["Jonas", "Jens"],
+            "03-30": ["Holger", "Holmfrid"],
+            "03-31": ["Ester", "Estrid"],
+            "04-01": ["Harald", "Hervor"],
+            "04-02": ["Gudmund", "Ingemund"],
+            "04-03": ["Ferdinand", "Nanna"],
+            "04-04": ["Marianne", "Marlene"],
+            "04-05": ["Irene", "Irja"],
+            "04-06": ["Vilhelm", "Helmi"],
+            "04-07": ["Irma", "Irmelin"],
+            "04-08": ["Nadja", "Tanja"],
+            "04-09": ["Otto", "Ottilia"],
+            "04-10": ["Ingvar", "Ingvor"],
+            "04-11": ["Ulf", "Ylva"],
+            "04-12": ["Liv", "Livia"],
+            "04-13": ["Artur", "Douglas"],
+            "04-14": ["Tiburtius", "Tim"],
+            "04-15": ["Olivia", "Oliver"],
+            "04-16": ["Patrik", "Patricia"],
+            "04-17": ["Elias", "Elis"],
+            "04-18": ["Valdemar", "Volmar"],
+            "04-19": ["Olaus", "Ola"],
+            "04-20": ["Amalia", "Amelie"],
+            "04-21": ["Anneli", "Annika"],
+            "04-22": ["Allan", "Alida"],
+            "04-23": ["Georg", "Göran"],
+            "04-24": ["Vega", "Viveka"],
+            "04-25": ["Markus", "Mark"],
+            "04-26": ["Teresia", "Terese"],
+            "04-27": ["Engelbrekt", "Enok"],
+            "04-28": ["Ture", "Tyra"],
+            "04-29": ["Tyko", "Tim"],
+            "04-30": ["Mariana", "Marianne"],
+            "05-01": ["Valborg", "Första maj"],
+            "05-02": ["Filip", "Filippa"],
+            "05-03": ["John", "Jane"],
+            "05-04": ["Monika", "Mona"],
+            "05-05": ["Gotthard", "Erhard"],
+            "05-06": ["Marit", "Rita"],
+            "05-07": ["Carina", "Carita"],
+            "05-08": ["Åke", "Ove"],
+            "05-09": ["Reidar", "Reidun"],
+            "05-10": ["Esbjörn", "Styrbjörn"],
+            "05-11": ["Märta", "Märit"],
+            "05-12": ["Charlotta", "Lotta"],
+            "05-13": ["Linnea", "Linn"],
+            "05-14": ["Halvard", "Halvar"],
+            "05-15": ["Sofia", "Sonja"],
+            "05-16": ["Ronald", "Ronny"],
+            "05-17": ["Rebecka", "Ruben"],
+            "05-18": ["Erik", "Eriksdagen"],
+            "05-19": ["Maj", "Majken"],
+            "05-20": ["Karolina", "Carola"],
+            "05-21": ["Konstantin", "Conny"],
+            "05-22": ["Hemming", "Henning"],
+            "05-23": ["Desideria", "Desiree"],
+            "05-24": ["Ivan", "Vanja"],
+            "05-25": ["Urban", "Ursula"],
+            "05-26": ["Vilhelmina", "Vilma"],
+            "05-27": ["Beda", "Blenda"],
+            "05-28": ["Ingeborg", "Borghild"],
+            "05-29": ["Yvonne", "Jansen"],
+            "05-30": ["Vera", "Veronika"],
+            "05-31": ["Petronella", "Pernilla"],
+            "06-01": ["Gun", "Gunnel"],
+            "06-02": ["Rutger", "Roger"],
+            "06-03": ["Ingemar", "Gudmar"],
+            "06-04": ["Solbritt", "Solveig"],
+            "06-05": ["Bo", "Boris"],
+            "06-06": ["Gustaf", "Nationaldagen"],
+            "06-07": ["Robert", "Robin"],
+            "06-08": ["Eivor", "Evor"],
+            "06-09": ["Börje", "Birger"],
+            "06-10": ["Svante", "Boris"],
+            "06-11": ["Bertil", "Berthold"],
+            "06-12": ["Eskil", "Eskilsdagen"],
+            "06-13": ["Aina", "Eina"],
+            "06-14": ["Håkan", "Heikki"],
+            "06-15": ["Margit", "Margot"],
+            "06-16": ["Axel", "Axelina"],
+            "06-17": ["Torborg", "Torvald"],
+            "06-18": ["Björn", "Bjarne"],
+            "06-19": ["Germund", "Görel"],
+            "06-20": ["Linda", "Linn"],
+            "06-21": ["Alf", "Alva"],
+            "06-22": ["Paulina", "Paula"],
+            "06-23": ["Adolf", "Adolfa"],
+            "06-24": ["Johannes Döparens dag"],
+            "06-25": ["David", "Salomon"],
+            "06-26": ["Rakel", "Lea"],
+            "06-27": ["Selma", "Fingal"],
+            "06-28": ["Leo", "Leopold"],
+            "06-29": ["Petrus", "Peter"],
+            "06-30": ["Elof", "Leif"],
+            "07-01": ["Aron", "Mirjam"],
+            "07-02": ["Rosa", "Rosita"],
+            "07-03": ["Aurora", "Adina"],
+            "07-04": ["Ulrika", "Ulla"],
+            "07-05": ["Laila", "Ritva"],
+            "07-06": ["Esaias", "Jessika"],
+            "07-07": ["Klas", "Kaj"],
+            "07-08": ["Kjell", "Tjelvar"],
+            "07-09": ["Jörgen", "Örjan"],
+            "07-10": ["André", "Andrea"],
+            "07-11": ["Eleonora", "Ellinor"],
+            "07-12": ["Herman", "Hermine"],
+            "07-13": ["Joel", "Judit"],
+            "07-14": ["Folke", "Odd"],
+            "07-15": ["Ragnhild", "Ragnvald"],
+            "07-16": ["Reinhold", "Reine"],
+            "07-17": ["Bruno", "Alexis"],
+            "07-18": ["Fredrik", "Fritz"],
+            "07-19": ["Sara", "Sally"],
+            "07-20": ["Margareta", "Greta"],
+            "07-21": ["Johanna", "Jane"],
+            "07-22": ["Magdalena", "Madeleine"],
+            "07-23": ["Emma", "Emmy"],
+            "07-24": ["Kristina", "Kerstin"],
+            "07-25": ["Jakob", "James"],
+            "07-26": ["Jesper", "Jessika"],
+            "07-27": ["Marta", "Moa"],
+            "07-28": ["Botvid", "Seved"],
+            "07-29": ["Olof", "Olle"],
+            "07-30": ["Algot", "Margot"],
+            "07-31": ["Helena", "Elin"],
+            "08-01": ["Per", "Pär"],
+            "08-02": ["Karin", "Kajsa"],
+            "08-03": ["Tage", "Tanja"],
+            "08-04": ["Arne", "Arnold"],
+            "08-05": ["Ulrik", "Alrik"],
+            "08-06": ["Alfons", "Inez"],
+            "08-07": ["Dennis", "Denise"],
+            "08-08": ["Silvia", "Sylvia"],
+            "08-09": ["Roland", "Roine"],
+            "08-10": ["Lars", "Lorentz"],
+            "08-11": ["Susanna", "Sanna"],
+            "08-12": ["Klara", "Clary"],
+            "08-13": ["Kaj", "Kaisa"],
+            "08-14": ["Uno", "Unn"],
+            "08-15": ["Stella", "Estelle"],
+            "08-16": ["Brynolf", "Sigyn"],
+            "08-17": ["Verner", "Valter"],
+            "08-18": ["Ellen", "Lena"],
+            "08-19": ["Magnus", "Måns"],
+            "08-20": ["Bernhard", "Bernt"],
+            "08-21": ["Jon", "Jansen"],
+            "08-22": ["Henrietta", "Henrika"],
+            "08-23": ["Signe", "Signhild"],
+            "08-24": ["Bartolomeus", "Bert"],
+            "08-25": ["Lovisa", "Louise"],
+            "08-26": ["Östen", "Ejvor"],
+            "08-27": ["Rolf", "Raoul"],
+            "08-28": ["Fatima", "Leila"],
+            "08-29": ["Hans", "Hampus"],
+            "08-30": ["Albert", "Albertina"],
+            "08-31": ["Arvid", "Vidar"],
+            "09-01": ["Sam", "Samuel"],
+            "09-02": ["Justus", "Justina"],
+            "09-03": ["Alfhild", "Alva"],
+            "09-04": ["Gisela", "Selma"],
+            "09-05": ["Adela", "Heidi"],
+            "09-06": ["Lilian", "Lilly"],
+            "09-07": ["Kevin", "Roy"],
+            "09-08": ["Alma", "Hulda"],
+            "09-09": ["Anita", "Annette"],
+            "09-10": ["Tord", "Turid"],
+            "09-11": ["Dagny", "Helny"],
+            "09-12": ["Åsa", "Åslög"],
+            "09-13": ["Sture", "Styrbjörn"],
+            "09-14": ["Ida", "Ellida"],
+            "09-15": ["Sigrid", "Siri"],
+            "09-16": ["Dag", "Daga"],
+            "09-17": ["Hildegard", "Magnhild"],
+            "09-18": ["Orvar", "Alvar"],
+            "09-19": ["Fredrika", "Carita"],
+            "09-20": ["Elise", "Lisa"],
+            "09-21": ["Matteus", "Mats"],
+            "09-22": ["Maurits", "Moritz"],
+            "09-23": ["Tekla", "Tea"],
+            "09-24": ["Gerhard", "Gert"],
+            "09-25": ["Tryggve", "Trygve"],
+            "09-26": ["Enar", "Einar"],
+            "09-27": ["Dagmar", "Rigmor"],
+            "09-28": ["Lennart", "Leonard"],
+            "09-29": ["Mikael", "Mikaela"],
+            "09-30": ["Helge", "Helny"],
+            "10-01": ["Ragnar", "Ragna"],
+            "10-02": ["Ludvig", "Louis"],
+            "10-03": ["Evald", "Osvald"],
+            "10-04": ["Frans", "Frank"],
+            "10-05": ["Bror", "Bruno"],
+            "10-06": ["Jenny", "Jennifer"],
+            "10-07": ["Birgitta", "Britta"],
+            "10-08": ["Nils", "Nelly"],
+            "10-09": ["Ingrid", "Inger"],
+            "10-10": ["Harry", "Harriet"],
+            "10-11": ["Erling", "Jarl"],
+            "10-12": ["Valfrid", "Manfred"],
+            "10-13": ["Berit", "Birgit"],
+            "10-14": ["Stellan", "Sten"],
+            "10-15": ["Hedvig", "Hillevi"],
+            "10-16": ["Finn", "Finlay"],
+            "10-17": ["Antonia", "Antoinette"],
+            "10-18": ["Lukas", "Lukina"],
+            "10-19": ["Tore", "Torsten"],
+            "10-20": ["Sibylla", "Camilla"],
+            "10-21": ["Ursula", "Yrsa"],
+            "10-22": ["Marika", "Marita"],
+            "10-23": ["Severin", "Sören"],
+            "10-24": ["Evert", "Eilert"],
+            "10-25": ["Inga", "Ingalill"],
+            "10-26": ["Amanda", "Rasmus"],
+            "10-27": ["Sabina", "Ina"],
+            "10-28": ["Simon", "Simone"],
+            "10-29": ["Viola", "Vivi"],
+            "10-30": ["Elsa", "Isabella"],
+            "10-31": ["Edit", "Edgar"],
+            "11-01": ["Allhelgonadagen"],
+            "11-02": ["Tobias", "Toini"],
+            "11-03": ["Hubert", "Hugo"],
+            "11-04": ["Sverker", "Erker"],
+            "11-05": ["Eugen", "Eugenia"],
+            "11-06": ["Gustav Adolf"],
+            "11-07": ["Ingegerd", "Ingela"],
+            "11-08": ["Vendela", "Vanda"],
+            "11-09": ["Teodor", "Teodora"],
+            "11-10": ["Martin", "Martina"],
+            "11-11": ["Mårten", "Mårtens dag"],
+            "11-12": ["Konrad", "Kurt"],
+            "11-13": ["Kristian", "Krister"],
+            "11-14": ["Emil", "Emilia"],
+            "11-15": ["Leopold", "Leopolda"],
+            "11-16": ["Vibeke", "Viveka"],
+            "11-17": ["Naemi", "Naima"],
+            "11-18": ["Lillemor", "Moa"],
+            "11-19": ["Elisabet", "Lisbet"],
+            "11-20": ["Pontus", "Pia"],
+            "11-21": ["Helga", "Olga"],
+            "11-22": ["Cecilia", "Sissela"],
+            "11-23": ["Klemens", "Clarence"],
+            "11-24": ["Gudrun", "Rune"],
+            "11-25": ["Katarina", "Katja"],
+            "11-26": ["Linus", "Love"],
+            "11-27": ["Astrid", "Asta"],
+            "11-28": ["Malte", "Malt"],
+            "11-29": ["Sune", "Synnöve"],
+            "11-30": ["Andreas", "Anders"],
+            "12-01": ["Oskar", "Ossian"],
+            "12-02": ["Beata", "Beatrice"],
+            "12-03": ["Lydia", "Cornelia"],
+            "12-04": ["Barbara", "Barbro"],
+            "12-05": ["Sven", "Svenja"],
+            "12-06": ["Nikolaus", "Niklas"],
+            "12-07": ["Angela", "Angelika"],
+            "12-08": ["Virginia", "Vera"],
+            "12-09": ["Anna", "Annie"],
+            "12-10": ["Malin", "Malena"],
+            "12-11": ["Daniel", "Daniela"],
+            "12-12": ["Alexander", "Alexis"],
+            "12-13": ["Lucia", "Luciadagen"],
+            "12-14": ["Sten", "Steen"],
+            "12-15": ["Gottfrid", "Gotthard"],
+            "12-16": ["Assar", "Astor"],
+            "12-17": ["Stig", "Staffan"],
+            "12-18": ["Abraham", "Efraim"],
+            "12-19": ["Isak", "Rebecka"],
+            "12-20": ["Israel", "Moses"],
+            "12-21": ["Tomas", "Tom"],
+            "12-22": ["Natanael", "Jonatan"],
+            "12-23": ["Adam", "Eva"],
+            "12-24": ["Julafton"],
+            "12-25": ["Juldagen"],
+            "12-26": ["Stefan", "Staffan"],
+            "12-27": ["Johannes", "Johan"],
+            "12-28": ["Värnlösa barns dag"],
+            "12-29": ["Natalia", "Natalie"],
+            "12-30": ["Abel", "Set"],
+            "12-31": ["Sylvester", "Nyårsafton"]
+        };
+        
+        // Swedish holidays (fixed dates)
+        const holidays = {
+            "01-01": "Nyårsdagen",
+            "01-06": "Trettondedag jul",
+            "05-01": "Första maj",
+            "06-06": "Nationaldagen",
+            "12-24": "Julafton",
+            "12-25": "Juldagen",
+            "12-26": "Annandag jul",
+            "12-31": "Nyårsafton"
+        };
+        
+        // Calculate Easter Sunday (Gauss algorithm)
+        function getEasterSunday(year) {
+            const a = year % 19;
+            const b = Math.floor(year / 100);
+            const c = year % 100;
+            const d = Math.floor(b / 4);
+            const e = b % 4;
+            const f = Math.floor((b + 8) / 25);
+            const g = Math.floor((b - f + 1) / 3);
+            const h = (19 * a + b - d - g + 15) % 30;
+            const i = Math.floor(c / 4);
+            const k = c % 4;
+            const l = (32 + 2 * e + 2 * i - h - k) % 7;
+            const m = Math.floor((a + 11 * h + 22 * l) / 451);
+            const month = Math.floor((h + l - 7 * m + 114) / 31) - 1;
+            const day = ((h + l - 7 * m + 114) % 31) + 1;
+            return new Date(year, month, day);
+        }
+        
+        // Get all moveable holidays for a year
+        function getMoveableHolidays(year) {
+            const easter = getEasterSunday(year);
+            const holidays = {};
+            
+            // Helper to add days to a date
+            const addDays = (date, days) => {
+                const result = new Date(date);
+                result.setDate(result.getDate() + days);
+                return result;
+            };
+            
+            // Helper to format date key
+            const toKey = (date) => formatDateKey(date.getMonth(), date.getDate());
+            
+            // Skärtorsdag (Maundy Thursday) - 3 days before Easter
+            holidays[toKey(addDays(easter, -3))] = "Skärtorsdagen";
+            
+            // Långfredag (Good Friday) - 2 days before Easter
+            holidays[toKey(addDays(easter, -2))] = "Långfredagen";
+            
+            // Påskafton (Easter Eve) - 1 day before Easter
+            holidays[toKey(addDays(easter, -1))] = "Påskafton";
+            
+            // Påskdagen (Easter Sunday)
+            holidays[toKey(easter)] = "Påskdagen";
+            
+            // Annandag påsk (Easter Monday) - 1 day after Easter
+            holidays[toKey(addDays(easter, 1))] = "Annandag påsk";
+            
+            // Kristi himmelsfärdsdag (Ascension Day) - 39 days after Easter
+            holidays[toKey(addDays(easter, 39))] = "Kristi himmelsfärd";
+            
+            // Pingstafton (Whitsun Eve) - 48 days after Easter
+            holidays[toKey(addDays(easter, 48))] = "Pingstafton";
+            
+            // Pingstdagen (Whit Sunday) - 49 days after Easter
+            holidays[toKey(addDays(easter, 49))] = "Pingstdagen";
+            
+            // Midsommarafton (Midsummer Eve) - Friday between June 19-25
+            const midsummerEve = getMidsummerEve(year);
+            holidays[toKey(midsummerEve)] = "Midsommarafton";
+            
+            // Midsommardagen (Midsummer Day) - Saturday between June 20-26
+            holidays[toKey(addDays(midsummerEve, 1))] = "Midsommardagen";
+            
+            // Alla helgons dag (All Saints' Day) - Saturday between Oct 31 - Nov 6
+            const allSaints = getAllSaintsDay(year);
+            holidays[toKey(allSaints)] = "Alla helgons dag";
+            
+            return holidays;
+        }
+        
+        // Get Midsummer Eve (Friday between June 19-25)
+        function getMidsummerEve(year) {
+            const june19 = new Date(year, 5, 19);
+            const dayOfWeek = june19.getDay();
+            // Find next Friday (day 5)
+            const daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+            return new Date(year, 5, 19 + daysUntilFriday);
+        }
+        
+        // Get All Saints' Day (Saturday between Oct 31 - Nov 6)
+        function getAllSaintsDay(year) {
+            const oct31 = new Date(year, 9, 31);
+            const dayOfWeek = oct31.getDay();
+            // Find next Saturday (day 6)
+            const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
+            return new Date(year, 9, 31 + daysUntilSaturday);
+        }
+        
+        // Check if a date is a holiday (fixed or moveable)
+        function getHoliday(year, month, day) {
+            const key = formatDateKey(month, day);
+            
+            // Check fixed holidays
+            if (holidays[key]) {
+                return holidays[key];
+            }
+            
+            // Check moveable holidays
+            const moveableHolidays = getMoveableHolidays(year);
+            if (moveableHolidays[key]) {
+                return moveableHolidays[key];
+            }
+            
+            return null;
+        }
+        
+        const dayNames = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
+        const dayNamesShort = ['Sö', 'Må', 'Ti', 'On', 'To', 'Fr', 'Lö'];
+        const monthNames = ['Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 
+                           'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December'];
+        
+        // Utility functions
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+        
+        function getWeeksInYear(year) {
+            const d = new Date(year, 11, 31);
+            const week = getWeekNumber(d);
+            return week === 1 ? 52 : week;
+        }
+        
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+        
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+        
+        function formatDateKey(month, day) {
+            return `${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+        
+        function getNameday(date) {
+            const key = formatDateKey(date.getMonth(), date.getDate());
+            return namedays[key] || [];
+        }
+        
+        // Update clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleTimeString('sv-SE');
+        }
+        
+        // Update dashboard
+        function updateDashboard() {
+            const now = new Date();
+            const weekNum = getWeekNumber(now);
+            const weeksInYear = getWeeksInYear(now.getFullYear());
+            const dayOfYear = getDayOfYear(now);
+            const daysInYear = isLeapYear(now.getFullYear()) ? 366 : 365;
+            const daysLeft = daysInYear - dayOfYear;
+            const progress = ((dayOfYear / daysInYear) * 100).toFixed(1);
+            
+            // Week
+            document.getElementById('week-number').textContent = weekNum;
+            document.getElementById('week-text').textContent = `av ${weeksInYear}`;
+            
+            // Date
+            document.getElementById('date-main').textContent = 
+                `${dayNames[now.getDay()]} ${now.getDate()} ${monthNames[now.getMonth()].toLowerCase()}`;
+            document.getElementById('date-sub').textContent = now.getFullYear();
+            
+            // Nameday
+            const todayNames = getNameday(now);
+            document.getElementById('nameday').textContent = todayNames.join(', ') || '—';
+            
+            // Tomorrow's nameday
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowNames = getNameday(tomorrow);
+            document.getElementById('nameday-tomorrow').textContent = 
+                `Imorgon: ${tomorrowNames.join(', ') || '—'}`;
+            
+            // Year stats
+            document.getElementById('current-year').textContent = now.getFullYear();
+            document.getElementById('day-of-year').textContent = `${dayOfYear} / ${daysInYear}`;
+            document.getElementById('days-left').textContent = daysLeft;
+            document.getElementById('year-progress').textContent = `${progress}%`;
+        }
+        
+        // Theme handling
+        function loadTheme() {
+            const saved = localStorage.getItem('dagskoll_theme');
+            return saved || 'dark';
+        }
+        
+        function saveTheme(theme) {
+            localStorage.setItem('dagskoll_theme', theme);
+        }
+        
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const toggle = document.getElementById('theme-toggle');
+            toggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+            toggle.title = theme === 'dark' ? 'Byt till ljust tema' : 'Byt till mörkt tema';
+        }
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            saveTheme(newTheme);
+        }
+        
+        // Initialize theme immediately to prevent flash
+        applyTheme(loadTheme());
+        
+        // Theme toggle click handler
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+        
+        // Swedish cities with coordinates
+        const CITIES = {
+            stockholm: { name: 'Stockholm', lat: 59.33, lon: 18.07 },
+            goteborg: { name: 'Göteborg', lat: 57.71, lon: 11.97 },
+            malmo: { name: 'Malmö', lat: 55.60, lon: 13.00 },
+            uppsala: { name: 'Uppsala', lat: 59.86, lon: 17.64 },
+            linkoping: { name: 'Linköping', lat: 58.41, lon: 15.62 },
+            orebro: { name: 'Örebro', lat: 59.27, lon: 15.21 },
+            vasteras: { name: 'Västerås', lat: 59.61, lon: 16.55 },
+            norrkoping: { name: 'Norrköping', lat: 58.59, lon: 16.18 },
+            jonkoping: { name: 'Jönköping', lat: 57.78, lon: 14.16 },
+            umea: { name: 'Umeå', lat: 63.83, lon: 20.26 },
+            lulea: { name: 'Luleå', lat: 65.58, lon: 22.15 },
+            sundsvall: { name: 'Sundsvall', lat: 62.39, lon: 17.31 },
+            karlstad: { name: 'Karlstad', lat: 59.38, lon: 13.50 },
+            gavle: { name: 'Gävle', lat: 60.67, lon: 17.15 },
+            vaxjo: { name: 'Växjö', lat: 56.88, lon: 14.81 }
+        };
+        
+        // Current location (default Stockholm, or from localStorage)
+        let currentLocation = loadLocation();
+        
+        function loadLocation() {
+            const saved = localStorage.getItem('dagskoll_location');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    return { ...CITIES.stockholm, id: 'stockholm' };
+                }
+            }
+            return { ...CITIES.stockholm, id: 'stockholm' };
+        }
+        
+        function saveLocation(location) {
+            localStorage.setItem('dagskoll_location', JSON.stringify(location));
+        }
+        
+        // Fetch sun times from Open-Meteo
+        async function fetchSunTimes() {
+            try {
+                const { lat, lon } = currentLocation;
+                const response = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset&timezone=Europe/Stockholm&forecast_days=1`
+                );
+                const data = await response.json();
+                
+                if (data.daily) {
+                    const sunrise = new Date(data.daily.sunrise[0]);
+                    const sunset = new Date(data.daily.sunset[0]);
+                    
+                    document.getElementById('sunrise').textContent = 
+                        sunrise.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+                    document.getElementById('sunset').textContent = 
+                        sunset.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+                    
+                    // Calculate daylight
+                    const daylightMs = sunset - sunrise;
+                    const daylightHours = Math.floor(daylightMs / (1000 * 60 * 60));
+                    const daylightMinutes = Math.floor((daylightMs % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    document.getElementById('daylight-text').textContent = 
+                        `${daylightHours}h ${daylightMinutes}m dagsljus`;
+                    
+                    // Daylight bar (percentage of 24h)
+                    const daylightPercent = (daylightMs / (24 * 60 * 60 * 1000)) * 100;
+                    document.getElementById('daylight-bar').style.width = `${daylightPercent}%`;
+                }
+            } catch (error) {
+                console.error('Could not fetch sun times:', error);
+            }
+        }
+        
+        // Weather code to description and icon
+        function getWeatherInfo(code) {
+            const weatherCodes = {
+                0: { desc: 'Klart', icon: '☀️' },
+                1: { desc: 'Mestadels klart', icon: '🌤️' },
+                2: { desc: 'Delvis molnigt', icon: '⛅' },
+                3: { desc: 'Mulet', icon: '☁️' },
+                45: { desc: 'Dimma', icon: '🌫️' },
+                48: { desc: 'Dimma med rimfrost', icon: '🌫️' },
+                51: { desc: 'Lätt duggregn', icon: '🌧️' },
+                53: { desc: 'Duggregn', icon: '🌧️' },
+                55: { desc: 'Tätt duggregn', icon: '🌧️' },
+                56: { desc: 'Underkylt duggregn', icon: '🌧️' },
+                57: { desc: 'Kraftigt underkylt duggregn', icon: '🌧️' },
+                61: { desc: 'Lätt regn', icon: '🌧️' },
+                63: { desc: 'Regn', icon: '🌧️' },
+                65: { desc: 'Kraftigt regn', icon: '🌧️' },
+                66: { desc: 'Underkylt regn', icon: '🌧️' },
+                67: { desc: 'Kraftigt underkylt regn', icon: '🌧️' },
+                71: { desc: 'Lätt snöfall', icon: '🌨️' },
+                73: { desc: 'Snöfall', icon: '🌨️' },
+                75: { desc: 'Kraftigt snöfall', icon: '🌨️' },
+                77: { desc: 'Snökorn', icon: '🌨️' },
+                80: { desc: 'Lätta regnskurar', icon: '🌦️' },
+                81: { desc: 'Regnskurar', icon: '🌦️' },
+                82: { desc: 'Kraftiga regnskurar', icon: '🌦️' },
+                85: { desc: 'Lätta snöbyar', icon: '🌨️' },
+                86: { desc: 'Snöbyar', icon: '🌨️' },
+                95: { desc: 'Åskväder', icon: '⛈️' },
+                96: { desc: 'Åskväder med hagel', icon: '⛈️' },
+                99: { desc: 'Åskväder med kraftigt hagel', icon: '⛈️' }
+            };
+            return weatherCodes[code] || { desc: 'Okänt', icon: '🌡️' };
+        }
+        
+        // Fetch weather from Open-Meteo
+        async function fetchWeather() {
+            try {
+                const { lat, lon } = currentLocation;
+                const response = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m,precipitation&timezone=Europe/Stockholm`
+                );
+                const data = await response.json();
+                
+                if (data.current) {
+                    const temp = Math.round(data.current.temperature_2m);
+                    const weatherCode = data.current.weather_code;
+                    const wind = data.current.wind_speed_10m;
+                    const precip = data.current.precipitation;
+                    
+                    const weatherInfo = getWeatherInfo(weatherCode);
+                    
+                    document.getElementById('weather-temp').textContent = `${temp}°`;
+                    document.getElementById('weather-icon').textContent = weatherInfo.icon;
+                    document.getElementById('weather-desc').textContent = weatherInfo.desc;
+                    document.getElementById('weather-wind').textContent = `${wind} m/s`;
+                    document.getElementById('weather-precip').textContent = `${precip} mm`;
+                }
+            } catch (error) {
+                console.error('Could not fetch weather:', error);
+                document.getElementById('weather-desc').textContent = 'Kunde inte hämta väder';
+            }
+        }
+        
+        // City selector change handler
+        document.getElementById('city-select').addEventListener('change', (e) => {
+            const cityId = e.target.value;
+            const city = CITIES[cityId];
+            if (city) {
+                currentLocation = { ...city, id: cityId };
+                saveLocation(currentLocation);
+                fetchWeather();
+                fetchSunTimes();
+            }
+        });
+        
+        // Geolocation button handler
+        document.getElementById('geolocation-btn').addEventListener('click', () => {
+            const btn = document.getElementById('geolocation-btn');
+            const select = document.getElementById('city-select');
+            
+            if (!navigator.geolocation) {
+                alert('Din webbläsare stödjer inte geolocation');
+                return;
+            }
+            
+            btn.classList.add('loading');
+            btn.textContent = '⏳';
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    currentLocation = {
+                        name: 'Min position',
+                        lat: latitude,
+                        lon: longitude,
+                        id: 'geolocation'
+                    };
+                    saveLocation(currentLocation);
+                    
+                    // Add "Min position" option if not exists
+                    let geoOption = select.querySelector('option[value="geolocation"]');
+                    if (!geoOption) {
+                        geoOption = document.createElement('option');
+                        geoOption.value = 'geolocation';
+                        geoOption.textContent = '📍 Min position';
+                        select.insertBefore(geoOption, select.firstChild);
+                    }
+                    select.value = 'geolocation';
+                    
+                    btn.classList.remove('loading');
+                    btn.textContent = '📍';
+                    
+                    fetchWeather();
+                    fetchSunTimes();
+                },
+                (error) => {
+                    btn.classList.remove('loading');
+                    btn.textContent = '📍';
+                    
+                    let message = 'Kunde inte hämta position';
+                    if (error.code === error.PERMISSION_DENIED) {
+                        message = 'Du nekade åtkomst till din position';
+                    }
+                    alert(message);
+                },
+                { enableHighAccuracy: false, timeout: 10000 }
+            );
+        });
+        
+        // Initialize city selector from saved location
+        function initLocationSelector() {
+            const select = document.getElementById('city-select');
+            
+            if (currentLocation.id === 'geolocation') {
+                const geoOption = document.createElement('option');
+                geoOption.value = 'geolocation';
+                geoOption.textContent = '📍 Min position';
+                select.insertBefore(geoOption, select.firstChild);
+                select.value = 'geolocation';
+            } else if (currentLocation.id && CITIES[currentLocation.id]) {
+                select.value = currentLocation.id;
+            }
+        }
+        
+        // Generate year calendar
+        let displayYear = new Date().getFullYear();
+        
+        function generateYearCalendar(year) {
+            const container = document.getElementById('year-calendar');
+            const today = new Date();
+            container.innerHTML = '';
+            
+            document.getElementById('calendar-year').textContent = year;
+            
+            for (let month = 0; month < 12; month++) {
+                const monthCard = document.createElement('div');
+                monthCard.className = 'month-card';
+                
+                if (year === today.getFullYear() && month === today.getMonth()) {
+                    monthCard.classList.add('current');
+                }
+                
+                // Month name
+                const monthName = document.createElement('div');
+                monthName.className = 'month-name';
+                monthName.textContent = monthNames[month];
+                monthCard.appendChild(monthName);
+                
+                // Weekday header (with empty space for week numbers)
+                const weekdayHeader = document.createElement('div');
+                weekdayHeader.className = 'weekday-header';
+                weekdayHeader.style.cssText = 'display: grid; grid-template-columns: 16px repeat(7, 1fr); gap: 2px; margin-bottom: 4px;';
+                
+                // Empty cell for week number column
+                const emptyHeader = document.createElement('span');
+                emptyHeader.textContent = '';
+                weekdayHeader.appendChild(emptyHeader);
+                
+                // Weekday names
+                const weekdays = ['Må', 'Ti', 'On', 'To', 'Fr', 'Lö', 'Sö'];
+                weekdays.forEach(day => {
+                    const span = document.createElement('span');
+                    span.textContent = day;
+                    weekdayHeader.appendChild(span);
+                });
+                monthCard.appendChild(weekdayHeader);
+                
+                // Build weeks array for the month
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                
+                // Adjust for Monday start (0 = Monday, 6 = Sunday)
+                let startDay = firstDay.getDay() - 1;
+                if (startDay < 0) startDay = 6;
+                
+                // Create weeks container
+                const weeksContainer = document.createElement('div');
+                weeksContainer.style.cssText = 'display: flex; flex-direction: column; gap: 2px;';
+                
+                let currentDay = 1;
+                let weekCount = 0;
+                
+                while (currentDay <= daysInMonth) {
+                    const weekRow = document.createElement('div');
+                    weekRow.style.cssText = 'display: grid; grid-template-columns: 16px repeat(7, 1fr); gap: 2px;';
+                    
+                    // Get week number for this row
+                    let weekDate;
+                    if (weekCount === 0 && startDay > 0) {
+                        // First week might start with empty cells, use first actual day
+                        weekDate = new Date(year, month, 1);
+                    } else {
+                        weekDate = new Date(year, month, currentDay);
+                    }
+                    const weekNum = getWeekNumber(weekDate);
+                    
+                    // Week number cell
+                    const weekNumCell = document.createElement('div');
+                    weekNumCell.className = 'week-num';
+                    weekNumCell.textContent = weekNum;
+                    weekNumCell.title = `Vecka ${weekNum}`;
+                    weekRow.appendChild(weekNumCell);
+                    
+                    // Days in this week
+                    for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+                        const dayCell = document.createElement('div');
+                        dayCell.className = 'day-cell';
+                        
+                        // First week padding
+                        if (weekCount === 0 && dayOfWeek < startDay) {
+                            dayCell.classList.add('empty');
+                        } else if (currentDay <= daysInMonth) {
+                            dayCell.textContent = currentDay;
+                            
+                            const currentDate = new Date(year, month, currentDay);
+                            const dayOfWeekNum = currentDate.getDay();
+                            
+                            // Check if today
+                            if (year === today.getFullYear() && 
+                                month === today.getMonth() && 
+                                currentDay === today.getDate()) {
+                                dayCell.classList.add('today');
+                            }
+                            
+                            // Check if holiday (fixed or moveable)
+                            const holiday = getHoliday(year, month, currentDay);
+                            if (holiday) {
+                                dayCell.classList.add('holiday');
+                                dayCell.title = holiday;
+                            }
+                            
+                            // Sunday styling
+                            if (dayOfWeekNum === 0) {
+                                dayCell.classList.add('sunday');
+                            }
+                            
+                            // Saturday styling
+                            if (dayOfWeekNum === 6) {
+                                dayCell.classList.add('weekend');
+                            }
+                            
+                            currentDay++;
+                        } else {
+                            dayCell.classList.add('empty');
+                        }
+                        
+                        weekRow.appendChild(dayCell);
+                    }
+                    
+                    weeksContainer.appendChild(weekRow);
+                    weekCount++;
+                }
+                
+                monthCard.appendChild(weeksContainer);
+                container.appendChild(monthCard);
+            }
+        }
+        
+        // Calendar navigation
+        document.getElementById('prev-year').addEventListener('click', () => {
+            displayYear--;
+            generateYearCalendar(displayYear);
+            updateYearButtons();
+        });
+        
+        document.getElementById('next-year').addEventListener('click', () => {
+            displayYear++;
+            generateYearCalendar(displayYear);
+            updateYearButtons();
+        });
+        
+        document.getElementById('current-year-btn').addEventListener('click', () => {
+            displayYear = new Date().getFullYear();
+            generateYearCalendar(displayYear);
+            updateYearButtons();
+        });
+        
+        function updateYearButtons() {
+            const currentYear = new Date().getFullYear();
+            const btn = document.getElementById('current-year-btn');
+            btn.classList.toggle('active', displayYear === currentYear);
+        }
+        
+        // Initialize
+        function init() {
+            updateClock();
+            updateDashboard();
+            initLocationSelector();
+            fetchSunTimes();
+            fetchWeather();
+            generateYearCalendar(displayYear);
+            
+            // Update clock every second
+            setInterval(updateClock, 1000);
+            
+            // Update dashboard every minute
+            setInterval(updateDashboard, 60000);
+            
+            // Refresh weather every 15 minutes
+            setInterval(fetchWeather, 15 * 60 * 1000);
+            
+            // Refresh sun times at midnight
+            const now = new Date();
+            const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+            const msUntilMidnight = midnight - now;
+            setTimeout(() => {
+                fetchSunTimes();
+                setInterval(fetchSunTimes, 24 * 60 * 60 * 1000);
+            }, msUntilMidnight);
+        }
+        
+        init();
+        
+        // RSS Feed URLs
+        const RSS_FEEDS = {
+            svt: {
+                url: 'https://www.svt.se/nyheter/rss.xml',
+                name: 'SVT',
+                color: '#e02e3d'
+            },
+            sr: {
+                url: 'https://api.sr.se/api/rss/program/83',
+                name: 'SR Ekot',
+                color: '#00a0dc'
+            },
+            feber: {
+                url: 'https://feber.se/rss',
+                name: 'Feber',
+                color: '#ff6600'
+            }
+        };
+        
+        // Store all news items
+        let allNewsItems = [];
+        let currentFilter = 'all';
+        
+        // Fetch RSS via proxy (try multiple proxies)
+        async function fetchRSS(feedKey) {
+            const feed = RSS_FEEDS[feedKey];
+            
+            // Try rss2json first
+            const proxies = [
+                `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`,
+                `https://api.allorigins.win/get?url=${encodeURIComponent(feed.url)}`
+            ];
+            
+            // Try rss2json
+            try {
+                const response = await fetch(proxies[0]);
+                const data = await response.json();
+                
+                if (data.status === 'ok' && data.items && data.items.length > 0) {
+                    return data.items.slice(0, 5).map(item => ({
+                        title: item.title,
+                        link: item.link,
+                        pubDate: new Date(item.pubDate),
+                        source: feedKey,
+                        sourceName: feed.name,
+                        sourceColor: feed.color
+                    }));
+                }
+            } catch (error) {
+                console.log(`rss2json failed for ${feedKey}, trying allorigins...`);
+            }
+            
+            // Fallback: try allorigins and parse XML
+            try {
+                const response = await fetch(proxies[1]);
+                const data = await response.json();
+                
+                if (data.contents) {
+                    const parser = new DOMParser();
+                    const xml = parser.parseFromString(data.contents, 'text/xml');
+                    const items = xml.querySelectorAll('item');
+                    
+                    if (items.length > 0) {
+                        return Array.from(items).slice(0, 5).map(item => ({
+                            title: item.querySelector('title')?.textContent || 'Ingen titel',
+                            link: item.querySelector('link')?.textContent || '#',
+                            pubDate: new Date(item.querySelector('pubDate')?.textContent || Date.now()),
+                            source: feedKey,
+                            sourceName: feed.name,
+                            sourceColor: feed.color
+                        }));
+                    }
+                }
+            } catch (error) {
+                console.error(`All proxies failed for ${feedKey}:`, error);
+            }
+            
+            return [];
+        }
+        
+        // Fetch all feeds
+        async function fetchAllNews() {
+            const newsGrid = document.getElementById('news-grid');
+            newsGrid.innerHTML = `
+                <div class="news-card">
+                    <div class="news-source">⏳</div>
+                    <div class="news-title">Hämtar nyheter...</div>
+                    <div class="news-time"></div>
+                </div>
+            `;
+            
+            try {
+                const results = await Promise.all([
+                    fetchRSS('svt'),
+                    fetchRSS('sr'),
+                    fetchRSS('feber')
+                ]);
+                
+                allNewsItems = results.flat().sort((a, b) => b.pubDate - a.pubDate);
+                renderNews();
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                newsGrid.innerHTML = `
+                    <div class="news-card">
+                        <div class="news-source">Fel</div>
+                        <div class="news-title">Kunde inte hämta nyheter</div>
+                        <div class="news-time">Försök igen senare</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Render news based on current filter
+        function renderNews() {
+            const newsGrid = document.getElementById('news-grid');
+            let items = currentFilter === 'all' 
+                ? allNewsItems.slice(0, 9)
+                : allNewsItems.filter(item => item.source === currentFilter).slice(0, 6);
+            
+            if (items.length === 0) {
+                newsGrid.innerHTML = `
+                    <div class="news-card">
+                        <div class="news-source">Info</div>
+                        <div class="news-title">Inga nyheter att visa</div>
+                        <div class="news-time"></div>
+                    </div>
+                `;
+                return;
+            }
+            
+            newsGrid.innerHTML = items.map(item => `
+                <div class="news-card" data-source="${item.source}">
+                    <a href="${item.link}" target="_blank" rel="noopener">
+                        <div class="news-source" style="color: ${item.sourceColor}">${item.sourceName}</div>
+                        <div class="news-title">${escapeHtml(item.title)}</div>
+                        <div class="news-time">${formatTimeAgo(item.pubDate)}</div>
+                    </a>
+                </div>
+            `).join('');
+        }
+        
+        // Format time ago
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Just nu';
+            if (diffMins < 60) return `${diffMins} min sedan`;
+            if (diffHours < 24) return `${diffHours} tim sedan`;
+            if (diffDays === 1) return 'Igår';
+            return `${diffDays} dagar sedan`;
+        }
+        
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // News filter click handlers
+        document.querySelectorAll('.news-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.news-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.source;
+                renderNews();
+            });
+        });
+        
+        // Fetch news on load
+        fetchAllNews();
+        
+        // Refresh news every 5 minutes
+        setInterval(fetchAllNews, 5 * 60 * 1000);
+        
+        // ============ ON THIS DAY / HISTORY ============
+        
+        let historyData = {
+            events: [],
+            births: [],
+            deaths: []
+        };
+        let currentHistoryType = 'events';
+        
+        // Fetch "On this day" from Wikipedia API
+        async function fetchOnThisDay() {
+            const today = new Date();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            
+            const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/all/${month}/${day}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data) {
+                    // Store data
+                    historyData.events = (data.events || []).slice(0, 12);
+                    historyData.births = (data.births || []).slice(0, 12);
+                    historyData.deaths = (data.deaths || []).slice(0, 12);
+                    
+                    renderHistory();
+                }
+            } catch (error) {
+                console.error('Could not fetch history:', error);
+                document.getElementById('history-grid').innerHTML = `
+                    <div class="history-card">
+                        <div class="history-year">⚠️</div>
+                        <div class="history-text">Kunde inte hämta historiska händelser</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Render history based on current filter
+        function renderHistory() {
+            const grid = document.getElementById('history-grid');
+            const items = historyData[currentHistoryType];
+            
+            if (!items || items.length === 0) {
+                grid.innerHTML = `
+                    <div class="history-card">
+                        <div class="history-year">—</div>
+                        <div class="history-text">Inga ${currentHistoryType === 'events' ? 'händelser' : currentHistoryType === 'births' ? 'födda' : 'döda'} att visa</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = items.slice(0, 6).map(item => {
+                const year = item.year || '?';
+                const text = item.text || 'Ingen beskrivning';
+                const link = item.pages && item.pages[0] ? item.pages[0].content_urls?.desktop?.page : null;
+                
+                const content = `
+                    <div class="history-year">${year}</div>
+                    <div class="history-text">${escapeHtml(text)}</div>
+                `;
+                
+                if (link) {
+                    return `<div class="history-card"><a href="${link}" target="_blank" rel="noopener">${content}</a></div>`;
+                }
+                return `<div class="history-card">${content}</div>`;
+            }).join('');
+        }
+        
+        // History filter click handlers
+        document.querySelectorAll('.history-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.history-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentHistoryType = btn.dataset.type;
+                renderHistory();
+            });
+        });
+        
+        // Fetch history on load
+        fetchOnThisDay();
+    </script>
+</body>
+</html>
