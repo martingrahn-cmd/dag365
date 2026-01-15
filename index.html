@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dagskoll - Vecka, datum, namnsdag</title>
-    <meta name="description" content="Snabb överblick över veckonummer, datum, namnsdag, soltider och nyheter">
+    <title>dag365 - Vecka, datum, namnsdag</title>
+    <meta name="description" content="dag365 - Snabb överblick över veckonummer, datum, namnsdag, soltider och nyheter">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f0f14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="dag365">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -122,6 +126,31 @@
         .theme-toggle:hover {
             border-color: var(--blue);
             background: var(--card-hover);
+        }
+        
+        .install-btn {
+            background: var(--blue);
+            border: 1px solid var(--blue);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        
+        .install-btn:hover {
+            background: #3a7ae8;
+            border-color: #3a7ae8;
+        }
+        
+        .install-btn.show {
+            display: flex;
         }
         
         /* Dashboard Grid */
@@ -875,8 +904,9 @@
 <body>
     <div class="container">
         <header class="site-header">
-            <div class="logo">dags<span>koll</span></div>
+            <div class="logo">dag<span>365</span></div>
             <div class="header-right">
+                <button id="install-btn" class="install-btn" title="Installera app">📲 Installera</button>
                 <button id="theme-toggle" class="theme-toggle" title="Byt tema">🌙</button>
                 <div class="header-time" id="clock">--:--:--</div>
             </div>
@@ -1029,7 +1059,7 @@
         </div>
         
         <footer>
-            Dagskoll — Snabb. Ren. Svensk.
+            dag365 — Snabb. Ren. Svensk.
         </footer>
     </div>
     
@@ -1840,85 +1870,127 @@
             }
         }
         
-        // Weather code to description and icon
+        // SMHI weather symbol to description and icon
         function getWeatherInfo(code) {
             const weatherCodes = {
-                0: { desc: 'Klart', icon: '☀️' },
-                1: { desc: 'Mestadels klart', icon: '🌤️' },
-                2: { desc: 'Delvis molnigt', icon: '⛅' },
-                3: { desc: 'Mulet', icon: '☁️' },
-                45: { desc: 'Dimma', icon: '🌫️' },
-                48: { desc: 'Dimma med rimfrost', icon: '🌫️' },
-                51: { desc: 'Lätt duggregn', icon: '🌧️' },
-                53: { desc: 'Duggregn', icon: '🌧️' },
-                55: { desc: 'Tätt duggregn', icon: '🌧️' },
-                56: { desc: 'Underkylt duggregn', icon: '🌧️' },
-                57: { desc: 'Kraftigt underkylt duggregn', icon: '🌧️' },
-                61: { desc: 'Lätt regn', icon: '🌧️' },
-                63: { desc: 'Regn', icon: '🌧️' },
-                65: { desc: 'Kraftigt regn', icon: '🌧️' },
-                66: { desc: 'Underkylt regn', icon: '🌧️' },
-                67: { desc: 'Kraftigt underkylt regn', icon: '🌧️' },
-                71: { desc: 'Lätt snöfall', icon: '🌨️' },
-                73: { desc: 'Snöfall', icon: '🌨️' },
-                75: { desc: 'Kraftigt snöfall', icon: '🌨️' },
-                77: { desc: 'Snökorn', icon: '🌨️' },
-                80: { desc: 'Lätta regnskurar', icon: '🌦️' },
-                81: { desc: 'Regnskurar', icon: '🌦️' },
-                82: { desc: 'Kraftiga regnskurar', icon: '🌦️' },
-                85: { desc: 'Lätta snöbyar', icon: '🌨️' },
-                86: { desc: 'Snöbyar', icon: '🌨️' },
-                95: { desc: 'Åskväder', icon: '⛈️' },
-                96: { desc: 'Åskväder med hagel', icon: '⛈️' },
-                99: { desc: 'Åskväder med kraftigt hagel', icon: '⛈️' }
+                1: { desc: 'Klart', icon: '☀️' },
+                2: { desc: 'Lätt molnighet', icon: '🌤️' },
+                3: { desc: 'Halvklart', icon: '⛅' },
+                4: { desc: 'Molnigt', icon: '🌥️' },
+                5: { desc: 'Mulet', icon: '☁️' },
+                6: { desc: 'Mulet', icon: '☁️' },
+                7: { desc: 'Dimma', icon: '🌫️' },
+                8: { desc: 'Lätta regnskurar', icon: '🌦️' },
+                9: { desc: 'Regnskurar', icon: '🌦️' },
+                10: { desc: 'Kraftiga regnskurar', icon: '🌦️' },
+                11: { desc: 'Åskväder', icon: '⛈️' },
+                12: { desc: 'Lätta byar av regn och snö', icon: '🌨️' },
+                13: { desc: 'Byar av regn och snö', icon: '🌨️' },
+                14: { desc: 'Kraftiga byar av regn och snö', icon: '🌨️' },
+                15: { desc: 'Lätta snöbyar', icon: '🌨️' },
+                16: { desc: 'Snöbyar', icon: '🌨️' },
+                17: { desc: 'Kraftiga snöbyar', icon: '🌨️' },
+                18: { desc: 'Lätt regn', icon: '🌧️' },
+                19: { desc: 'Regn', icon: '🌧️' },
+                20: { desc: 'Kraftigt regn', icon: '🌧️' },
+                21: { desc: 'Åska', icon: '⛈️' },
+                22: { desc: 'Lätt snöblandat regn', icon: '🌨️' },
+                23: { desc: 'Snöblandat regn', icon: '🌨️' },
+                24: { desc: 'Kraftigt snöblandat regn', icon: '🌨️' },
+                25: { desc: 'Lätt snöfall', icon: '🌨️' },
+                26: { desc: 'Snöfall', icon: '❄️' },
+                27: { desc: 'Kraftigt snöfall', icon: '❄️' }
             };
             return weatherCodes[code] || { desc: 'Okänt', icon: '🌡️' };
         }
         
-        // Fetch 3-day forecast from Open-Meteo
+        // Fetch 3-day forecast from SMHI
         async function fetchWeather() {
             const forecastGrid = document.getElementById('forecast-grid');
             
             try {
                 const { lat, lon } = currentLocation;
+                // SMHI kräver max 6 decimaler
+                const latRound = lat.toFixed(6);
+                const lonRound = lon.toFixed(6);
+                
                 const response = await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=Europe/Stockholm&forecast_days=3`
+                    `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lonRound}/lat/${latRound}/data.json`
                 );
                 const data = await response.json();
                 
-                if (data.daily) {
-                    const days = [];
+                if (data.timeSeries) {
                     const dayNames = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
                     const today = new Date();
+                    today.setHours(0, 0, 0, 0);
                     
-                    for (let i = 0; i < 3; i++) {
-                        const date = new Date(data.daily.time[i]);
-                        let dayName;
+                    // Gruppera data per dag (närmast kl 12 för representativt väder)
+                    const dailyData = {};
+                    
+                    data.timeSeries.forEach(entry => {
+                        const date = new Date(entry.validTime);
+                        const dateKey = date.toISOString().split('T')[0];
+                        const hour = date.getHours();
                         
+                        // Hämta parametrar
+                        const params = {};
+                        entry.parameters.forEach(p => {
+                            params[p.name] = p.values[0];
+                        });
+                        
+                        if (!dailyData[dateKey]) {
+                            dailyData[dateKey] = {
+                                date: date,
+                                temps: [],
+                                winds: [],
+                                precips: [],
+                                symbol: null,
+                                symbolHour: 24
+                            };
+                        }
+                        
+                        // Samla temperatur och vind
+                        if (params.t !== undefined) dailyData[dateKey].temps.push(params.t);
+                        if (params.ws !== undefined) dailyData[dateKey].winds.push(params.ws);
+                        if (params.pmean !== undefined) dailyData[dateKey].precips.push(params.pmean);
+                        
+                        // Ta vädersymbol närmast kl 12
+                        if (params.Wsymb2 !== undefined) {
+                            const distTo12 = Math.abs(hour - 12);
+                            if (distTo12 < dailyData[dateKey].symbolHour) {
+                                dailyData[dateKey].symbol = params.Wsymb2;
+                                dailyData[dateKey].symbolHour = distTo12;
+                            }
+                        }
+                    });
+                    
+                    // Konvertera till array och ta 3 dagar
+                    const days = Object.values(dailyData).slice(0, 3).map((day, i) => {
+                        let dayName;
                         if (i === 0) {
                             dayName = 'Idag';
                         } else if (i === 1) {
                             dayName = 'Imorgon';
                         } else {
-                            dayName = dayNames[date.getDay()];
+                            dayName = dayNames[day.date.getDay()];
                         }
                         
-                        const weatherInfo = getWeatherInfo(data.daily.weather_code[i]);
-                        const tempMax = Math.round(data.daily.temperature_2m_max[i]);
-                        const tempMin = Math.round(data.daily.temperature_2m_min[i]);
-                        const precip = data.daily.precipitation_sum[i];
-                        const wind = Math.round(data.daily.wind_speed_10m_max[i]);
+                        const weatherInfo = getWeatherInfo(day.symbol);
+                        const tempMax = Math.round(Math.max(...day.temps));
+                        const tempMin = Math.round(Math.min(...day.temps));
+                        const windMax = Math.round(Math.max(...day.winds));
+                        const precipSum = day.precips.reduce((a, b) => a + b, 0).toFixed(1);
                         
-                        days.push({
+                        return {
                             dayName,
                             icon: weatherInfo.icon,
                             desc: weatherInfo.desc,
                             tempMax,
                             tempMin,
-                            precip,
-                            wind
-                        });
-                    }
+                            wind: windMax,
+                            precip: precipSum
+                        };
+                    });
                     
                     forecastGrid.innerHTML = days.map(day => `
                         <div class="forecast-day" title="${day.desc}">
@@ -2494,6 +2566,54 @@
         
         // Fetch history on load
         fetchOnThisDay();
+        
+        // ============ PWA / SERVICE WORKER ============
+        
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('dag365: Service Worker registered', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('dag365: Service Worker registration failed', error);
+                    });
+            });
+        }
+        
+        // PWA Install prompt
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Förhindra att Chrome visar sin egen prompt
+            e.preventDefault();
+            deferredPrompt = e;
+            // Visa vår installationsknapp
+            installBtn.classList.add('show');
+        });
+        
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            
+            // Visa installationsprompt
+            deferredPrompt.prompt();
+            
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('dag365: Install prompt outcome:', outcome);
+            
+            // Rensa - kan bara användas en gång
+            deferredPrompt = null;
+            installBtn.classList.remove('show');
+        });
+        
+        // Dölj knappen om redan installerad
+        window.addEventListener('appinstalled', () => {
+            console.log('dag365: App installed');
+            installBtn.classList.remove('show');
+            deferredPrompt = null;
+        });
     </script>
 </body>
 </html>

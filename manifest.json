@@ -1,11 +1,12 @@
 {
-    "name": "Dagskoll",
-    "short_name": "Dagskoll",
-    "description": "Vecka, datum, namnsdag och mer",
+    "name": "dag365",
+    "short_name": "dag365",
+    "description": "Vecka, datum, namnsdag, väder och nyheter",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0f0f14",
     "theme_color": "#0f0f14",
+    "orientation": "any",
     "icons": [
         {
             "src": "icon-192.png",
