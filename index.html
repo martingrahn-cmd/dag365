@@ -434,6 +434,55 @@
             font-size: 0.8rem;
         }
         
+        /* Themeday Widget */
+        .themeday-widget {
+            grid-column: span 3;
+            background: linear-gradient(135deg, #3d2d1f 0%, #1a1a22 100%);
+        }
+        
+        .themeday-widget .dot { background: #f4a460; }
+        
+        .themeday-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .themeday-icon {
+            font-size: 2rem;
+        }
+        
+        .themeday-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #f4a460;
+        }
+        
+        [data-theme="light"] .themeday-widget {
+            background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+        }
+        
+        /* Calendar themeday marker */
+        .day-cell.themeday {
+            position: relative;
+        }
+        
+        .day-cell.themeday::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: #f4a460;
+            border-radius: 50%;
+        }
+        
+        .day-cell.today.themeday::after {
+            background: white;
+        }
+        
         /* Section Header */
         .section-header {
             display: flex;
@@ -767,7 +816,8 @@
             .sun-widget,
             .weather-widget,
             .stats-widget,
-            .holidays-widget {
+            .holidays-widget,
+            .themeday-widget {
                 grid-column: span 2;
             }
             .week-widget {
@@ -893,6 +943,14 @@
                 <div class="stat-row">
                     <span class="stat-label">Progress</span>
                     <span class="stat-value" id="year-progress">--%</span>
+                </div>
+            </div>
+            
+            <div class="widget themeday-widget" id="themeday-widget" style="display: none;">
+                <div class="widget-label"><span class="dot"></span>Idag firas också</div>
+                <div class="themeday-content">
+                    <span class="themeday-icon" id="themeday-icon">🎉</span>
+                    <span class="themeday-name" id="themeday-name">-</span>
                 </div>
             </div>
         </div>
@@ -1334,6 +1392,125 @@
             "12-31": "Nyårsafton"
         };
         
+        // Temadagar & märkesdagar (fixed dates)
+        const themeDays = {
+            // Januari
+            "01-04": { name: "Spaghettidagen", icon: "🍝", category: "mat" },
+            "01-17": { name: "Munkkaffets dag", icon: "☕", category: "mat" },
+            "01-21": { name: "Kramens dag", icon: "🤗", category: "international" },
+            
+            // Februari
+            "02-05": { name: "Nutellans dag", icon: "🍫", category: "mat" },
+            "02-14": { name: "Alla hjärtans dag", icon: "❤️", category: "international" },
+            
+            // Mars
+            "03-08": { name: "Internationella kvinnodagen", icon: "♀️", category: "fn" },
+            "03-14": { name: "Pi-dagen", icon: "🥧", category: "nörd" },
+            "03-20": { name: "Internationella lyckodagen", icon: "😊", category: "fn" },
+            "03-25": { name: "Våffeldagen", icon: "🧇", category: "mat" },
+            
+            // April
+            "04-07": { name: "Världshälsodagen", icon: "🏥", category: "fn" },
+            "04-22": { name: "Internationella Moder Jord-dagen", icon: "🌍", category: "fn" },
+            "04-23": { name: "Världsbokdagen", icon: "📚", category: "fn" },
+            
+            // Maj
+            "05-04": { name: "Star Wars-dagen", icon: "⚔️", category: "nörd" },
+            "05-17": { name: "Norges nationaldag", icon: "🇳🇴", category: "nordic" },
+            "05-25": { name: "Handduks­dagen", icon: "🛁", category: "nörd" },
+            
+            // Juni
+            "06-05": { name: "Världsmiljödagen", icon: "🌱", category: "fn" },
+            "06-08": { name: "Världshavsdagen", icon: "🌊", category: "fn" },
+            "06-21": { name: "Sommarsolståndet", icon: "☀️", category: "swedish" },
+            
+            // Juli
+            "07-17": { name: "Världens emoji-dag", icon: "😀", category: "international" },
+            
+            // Augusti
+            "08-08": { name: "Internationella kattdagen", icon: "🐱", category: "international" },
+            "08-09": { name: "Skärgårdens dag", icon: "🏝️", category: "swedish" },
+            
+            // September
+            "09-13": { name: "Programmerarens dag", icon: "💻", category: "nörd" },
+            "09-19": { name: "Pratar som en pirat-dagen", icon: "🏴‍☠️", category: "nörd" },
+            "09-21": { name: "Internationella fredsdagen", icon: "☮️", category: "fn" },
+            "09-29": { name: "Världshjärtdagen", icon: "❤️", category: "fn" },
+            
+            // Oktober
+            "10-01": { name: "Internationella kaffedagen", icon: "☕", category: "international" },
+            "10-04": { name: "Kanelbullens dag", icon: "🥐", category: "mat" },
+            "10-05": { name: "Världslärardagen", icon: "👩‍🏫", category: "fn" },
+            "10-10": { name: "Världsdagen för psykisk hälsa", icon: "🧠", category: "fn" },
+            "10-16": { name: "Världsbrödsdagen", icon: "🍞", category: "fn" },
+            "10-24": { name: "FN-dagen", icon: "🇺🇳", category: "fn" },
+            "10-31": { name: "Halloween", icon: "🎃", category: "international" },
+            
+            // November
+            "11-07": { name: "Kladdkakans dag", icon: "🍫", category: "mat" },
+            "11-09": { name: "Lussekattens dag", icon: "🐱", category: "mat" },
+            "11-11": { name: "Chokladens dag", icon: "🍫", category: "mat" },
+            "11-13": { name: "Världsvänlighetsdagen", icon: "💛", category: "international" },
+            
+            // December
+            "12-05": { name: "Internationella volontärdagen", icon: "🤝", category: "fn" },
+            "12-10": { name: "Nobeldagen", icon: "🏅", category: "swedish" },
+            "12-21": { name: "Vintersolståndet", icon: "❄️", category: "swedish" }
+        };
+        
+        // Rörliga temadagar (beräknas)
+        function getMoveableThemeDays(year) {
+            const days = {};
+            const easter = getEasterSunday(year);
+            
+            const addDays = (date, n) => {
+                const result = new Date(date);
+                result.setDate(result.getDate() + n);
+                return result;
+            };
+            
+            const toKey = (date) => formatDateKey(date.getMonth(), date.getDate());
+            
+            // Fettisdagen - 47 dagar före påsk
+            const fettisdag = addDays(easter, -47);
+            days[toKey(fettisdag)] = { name: "Fettisdagen", icon: "🥮", category: "mat" };
+            
+            // Mors dag - sista söndagen i maj
+            const lastMay = new Date(year, 4, 31);
+            const morsdagOffset = lastMay.getDay();
+            const morsdag = new Date(year, 4, 31 - morsdagOffset);
+            days[toKey(morsdag)] = { name: "Mors dag", icon: "💐", category: "swedish" };
+            
+            // Fars dag - andra söndagen i november
+            const nov1 = new Date(year, 10, 1);
+            const firstSundayNov = (7 - nov1.getDay()) % 7;
+            const farsdag = new Date(year, 10, 1 + firstSundayNov + 7);
+            days[toKey(farsdag)] = { name: "Fars dag", icon: "👔", category: "swedish" };
+            
+            // Kanelbullens dag redan i fixed (4 okt), men semlans dag = fettisdagen
+            days[toKey(fettisdag)].name = "Fettisdagen / Semlans dag";
+            
+            return days;
+        }
+        
+        // Hämta temadag för ett datum
+        function getThemeDay(year, month, day) {
+            const key = formatDateKey(month, day);
+            
+            // Kolla fasta temadagar
+            if (themeDays[key]) {
+                return themeDays[key];
+            }
+            
+            // Kolla rörliga temadagar
+            const moveable = getMoveableThemeDays(year);
+            if (moveable[key]) {
+                return moveable[key];
+            }
+            
+            return null;
+        }
+        
         // Calculate Easter Sunday (Gauss algorithm)
         function getEasterSunday(year) {
             const a = year % 19;
@@ -1523,6 +1700,17 @@
             document.getElementById('day-of-year').textContent = `${dayOfYear} / ${daysInYear}`;
             document.getElementById('days-left').textContent = daysLeft;
             document.getElementById('year-progress').textContent = `${progress}%`;
+            
+            // Theme day
+            const themeDay = getThemeDay(now.getFullYear(), now.getMonth(), now.getDate());
+            const themeDayWidget = document.getElementById('themeday-widget');
+            if (themeDay) {
+                themeDayWidget.style.display = 'block';
+                document.getElementById('themeday-icon').textContent = themeDay.icon;
+                document.getElementById('themeday-name').textContent = themeDay.name;
+            } else {
+                themeDayWidget.style.display = 'none';
+            }
         }
         
         // Theme handling
@@ -1879,6 +2067,17 @@
                             if (holiday) {
                                 dayCell.classList.add('holiday');
                                 dayCell.title = holiday;
+                            }
+                            
+                            // Check if themeday
+                            const themeDay = getThemeDay(year, month, currentDay);
+                            if (themeDay) {
+                                dayCell.classList.add('themeday');
+                                if (dayCell.title) {
+                                    dayCell.title += ' | ' + themeDay.icon + ' ' + themeDay.name;
+                                } else {
+                                    dayCell.title = themeDay.icon + ' ' + themeDay.name;
+                                }
                             }
                             
                             // Sunday styling
