@@ -845,6 +845,106 @@
             margin-top: 0.75rem;
         }
         
+        /* Quote Section */
+        .quote-section {
+            margin-top: 2rem;
+        }
+        
+        .quote-card {
+            background: linear-gradient(135deg, #1f2d3d 0%, var(--card) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        [data-theme="light"] .quote-card {
+            background: linear-gradient(135deg, #e0e7ff 0%, var(--card) 100%);
+        }
+        
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            font-family: Georgia, serif;
+            color: var(--blue);
+            opacity: 0.1;
+            line-height: 1;
+        }
+        
+        .quote-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--text);
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1rem;
+        }
+        
+        .quote-author {
+            font-size: 0.9rem;
+            color: var(--blue);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .quote-author::before {
+            content: '—';
+            color: var(--muted);
+        }
+        
+        .quote-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-left: 0.5rem;
+        }
+        
+        .quote-nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .quote-nav button {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        
+        .quote-nav button:hover {
+            border-color: var(--blue);
+            background: var(--card-hover);
+        }
+        
+        .quote-counter {
+            margin-left: auto;
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-family: 'Space Mono', monospace;
+            align-self: center;
+        }
+        
+        @media (max-width: 700px) {
+            .quote-text {
+                font-size: 1.1rem;
+            }
+            .quote-card {
+                padding: 1.5rem;
+            }
+        }
+        
         /* Footer */
         footer {
             text-align: center;
@@ -1035,6 +1135,22 @@
                 <div class="history-card">
                     <div class="history-year">⏳</div>
                     <div class="history-text">Laddar historiska händelser...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quote-section">
+            <div class="section-header">
+                <h2 class="section-title">💬 Dagens citat</h2>
+            </div>
+            <div class="quote-card">
+                <div class="quote-text" id="quote-text">Laddar citat...</div>
+                <div class="quote-author" id="quote-author"></div>
+                <div class="quote-nav">
+                    <button id="prev-quote">← Föregående</button>
+                    <button id="next-quote">Nästa →</button>
+                    <button id="random-quote">🎲 Slumpa</button>
+                    <span class="quote-counter" id="quote-counter">1/50</span>
                 </div>
             </div>
         </div>
@@ -2566,6 +2682,125 @@
         
         // Fetch history on load
         fetchOnThisDay();
+        
+        // ============ QUOTES ============
+        
+        const quotes = [
+            // Filosofi & visdom
+            { text: "Jag tänker, alltså finns jag.", author: "René Descartes", meta: "filosof" },
+            { text: "Det enda jag vet är att jag ingenting vet.", author: "Sokrates", meta: "filosof" },
+            { text: "Livet är vad som händer medan du är upptagen med att göra andra planer.", author: "John Lennon", meta: "musiker" },
+            { text: "Var själv den förändring du vill se i världen.", author: "Mahatma Gandhi", meta: "aktivist" },
+            { text: "Den som har ett varför att leva för kan uthärda nästan vilket hur som helst.", author: "Friedrich Nietzsche", meta: "filosof" },
+            { text: "Fantasi är viktigare än kunskap.", author: "Albert Einstein", meta: "fysiker" },
+            { text: "Att vara eller inte vara, det är frågan.", author: "William Shakespeare", meta: "dramatiker" },
+            { text: "Frihet är inte värt att ha om den inte innefattar friheten att göra misstag.", author: "Mahatma Gandhi", meta: "aktivist" },
+            
+            // Framgång & motivation
+            { text: "Den enda omöjliga resan är den du aldrig påbörjar.", author: "Tony Robbins", meta: "författare" },
+            { text: "Framgång är inte slutgiltig, misslyckande är inte ödesdigert: det är modet att fortsätta som räknas.", author: "Winston Churchill", meta: "statsman" },
+            { text: "Det spelar ingen roll hur långsamt du går så länge du inte stannar.", author: "Konfucius", meta: "filosof" },
+            { text: "Den bästa tiden att plantera ett träd var för tjugo år sedan. Den näst bästa tiden är nu.", author: "Kinesiskt ordspråk", meta: "" },
+            { text: "Gör det du är rädd för och rädslan kommer säkert att dö.", author: "Ralph Waldo Emerson", meta: "filosof" },
+            { text: "Framgång är att gå från misslyckande till misslyckande utan att förlora entusiasmen.", author: "Winston Churchill", meta: "statsman" },
+            { text: "Möjligheter kommer inte av sig själva. Du skapar dem.", author: "Chris Grosser", meta: "entreprenör" },
+            { text: "Det är aldrig för sent att bli vad du kunde ha varit.", author: "George Eliot", meta: "författare" },
+            
+            // Kreativitet & konst
+            { text: "Kreativitet kräver mod.", author: "Henri Matisse", meta: "konstnär" },
+            { text: "Varje barn är en konstnär. Problemet är att förbli konstnär när man växer upp.", author: "Pablo Picasso", meta: "konstnär" },
+            { text: "Logik tar dig från A till B. Fantasi tar dig överallt.", author: "Albert Einstein", meta: "fysiker" },
+            { text: "Konsten tvättar bort själens damm från vardagslivet.", author: "Pablo Picasso", meta: "konstnär" },
+            { text: "Utan musik vore livet ett misstag.", author: "Friedrich Nietzsche", meta: "filosof" },
+            
+            // Kärlek & relationer
+            { text: "Det enda vi har att frukta är fruktan själv.", author: "Franklin D. Roosevelt", meta: "president" },
+            { text: "I slutändan är det inte åren i ditt liv som räknas, utan livet i dina år.", author: "Abraham Lincoln", meta: "president" },
+            { text: "Att älska och bli älskad är att känna solen från båda hållen.", author: "David Viscott", meta: "psykiater" },
+            { text: "Det finns bara en lycka i livet: att älska och bli älskad.", author: "George Sand", meta: "författare" },
+            
+            // Vetenskap & kunskap
+            { text: "Den som aldrig gjort ett misstag har aldrig provat något nytt.", author: "Albert Einstein", meta: "fysiker" },
+            { text: "Kunskap talar, men visdom lyssnar.", author: "Jimi Hendrix", meta: "musiker" },
+            { text: "Ju mer jag lär mig, desto mer inser jag hur mycket jag inte vet.", author: "Albert Einstein", meta: "fysiker" },
+            { text: "Utbildning är det mäktigaste vapnet du kan använda för att förändra världen.", author: "Nelson Mandela", meta: "statsman" },
+            
+            // Livets mening
+            { text: "Livet är verkligen enkelt, men vi insisterar på att göra det komplicerat.", author: "Konfucius", meta: "filosof" },
+            { text: "Det är inte hur länge du lever som spelar roll, utan hur.", author: "Seneca", meta: "filosof" },
+            { text: "Lycka är inte något färdigt. Den kommer från dina egna handlingar.", author: "Dalai Lama", meta: "andlig ledare" },
+            { text: "Syftet med våra liv är att vara lyckliga.", author: "Dalai Lama", meta: "andlig ledare" },
+            { text: "Livet förstås baklänges men måste levas framlänges.", author: "Søren Kierkegaard", meta: "filosof" },
+            
+            // Mod & styrka
+            { text: "Mod är inte avsaknaden av rädsla, utan bedömningen att något annat är viktigare.", author: "Ambrose Redmoon", meta: "författare" },
+            { text: "Du måste göra det du tror att du inte kan.", author: "Eleanor Roosevelt", meta: "diplomat" },
+            { text: "Det som inte dödar oss gör oss starkare.", author: "Friedrich Nietzsche", meta: "filosof" },
+            { text: "En hjälte är inte modigare än en vanlig människa, men modig fem minuter längre.", author: "Ralph Waldo Emerson", meta: "filosof" },
+            
+            // Enkelhet & sanning
+            { text: "Enkelhet är den yttersta formen av sofistikering.", author: "Leonardo da Vinci", meta: "konstnär & uppfinnare" },
+            { text: "Sanningen är sällan ren och aldrig enkel.", author: "Oscar Wilde", meta: "författare" },
+            { text: "Var dig själv; alla andra är redan upptagna.", author: "Oscar Wilde", meta: "författare" },
+            { text: "Det är bättre att bli hatad för den man är än att bli älskad för den man inte är.", author: "André Gide", meta: "författare" },
+            
+            // Tid & handling
+            { text: "Skjut inte upp till morgondagen det du kan göra idag.", author: "Benjamin Franklin", meta: "uppfinnare" },
+            { text: "Tid du njuter av att slösa är inte slösad tid.", author: "Bertrand Russell", meta: "filosof" },
+            { text: "Går det inte att göra snabbt, gör det långsamt men gör det.", author: "Japanskt ordspråk", meta: "" },
+            { text: "Den som flyttar berg börjar med att bära små stenar.", author: "Konfucius", meta: "filosof" },
+            
+            // Drömmar & hopp
+            { text: "Alla våra drömmar kan gå i uppfyllelse om vi har modet att förverkliga dem.", author: "Walt Disney", meta: "entreprenör" },
+            { text: "Håll blicken mot stjärnorna och fötterna på jorden.", author: "Theodore Roosevelt", meta: "president" },
+            { text: "Det finns inga hopplösa situationer, endast människor som har förlorat hoppet.", author: "Clare Boothe Luce", meta: "författare" },
+            { text: "En dröm du drömmer ensam är bara en dröm. En dröm ni drömmer tillsammans är verklighet.", author: "Yoko Ono", meta: "konstnär" }
+        ];
+        
+        let currentQuoteIndex = 0;
+        
+        // Initialize with today's quote based on day of year
+        function initQuote() {
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+            currentQuoteIndex = dayOfYear % quotes.length;
+            displayQuote();
+        }
+        
+        function displayQuote() {
+            const quote = quotes[currentQuoteIndex];
+            document.getElementById('quote-text').textContent = quote.text;
+            
+            const authorEl = document.getElementById('quote-author');
+            if (quote.meta) {
+                authorEl.innerHTML = `${quote.author} <span class="quote-meta">${quote.meta}</span>`;
+            } else {
+                authorEl.textContent = quote.author;
+            }
+            
+            document.getElementById('quote-counter').textContent = `${currentQuoteIndex + 1}/${quotes.length}`;
+        }
+        
+        document.getElementById('prev-quote').addEventListener('click', () => {
+            currentQuoteIndex = (currentQuoteIndex - 1 + quotes.length) % quotes.length;
+            displayQuote();
+        });
+        
+        document.getElementById('next-quote').addEventListener('click', () => {
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            displayQuote();
+        });
+        
+        document.getElementById('random-quote').addEventListener('click', () => {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * quotes.length);
+            } while (newIndex === currentQuoteIndex && quotes.length > 1);
+            currentQuoteIndex = newIndex;
+            displayQuote();
+        });
+        
+        // Initialize quotes
+        initQuote();
         
         // ============ PWA / SERVICE WORKER ============
         
