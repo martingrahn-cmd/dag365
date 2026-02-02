@@ -1129,6 +1129,7 @@
         <header class="site-header">
             <div class="logo">dag<span>365</span></div>
             <div class="header-right">
+                <button id="notify-btn" class="install-btn" title="Aktivera OS-notiser">🔔 Notiser</button>
                 <button id="install-btn" class="install-btn" title="Installera app">📲 Installera</button>
                 <button id="theme-toggle" class="theme-toggle" title="Byt tema">🌙</button>
                 <div class="header-time" id="clock">--:--:--</div>
@@ -3227,6 +3228,156 @@
             installBtn.classList.remove('show');
             deferredPrompt = null;
         });
+
+        // ============ FIREBASE PUSH NOTIFICATIONS ============
+
+        const VAPID_KEY = 'BHvKw4y_tYRL1PVuWcdv18esdk_9_8az61Z057TI3C85nRXw-1lUAzXfmvCW1l96AEsOQ-hnyI86iQNs3zGM_3g';
+        const notifyBtn = document.getElementById('notify-btn');
+        let firebaseApp = null;
+        let messaging = null;
+
+        // Ladda Firebase dynamiskt
+        async function loadFirebase() {
+            if (firebaseApp) return true;
+
+            try {
+                // Importera Firebase moduler
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js');
+                const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js');
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDUGbZDv4R4kPHCZez0Xsf5_iv3vqaYhYE",
+                    authDomain: "dag365-2065b.firebaseapp.com",
+                    projectId: "dag365-2065b",
+                    storageBucket: "dag365-2065b.firebasestorage.app",
+                    messagingSenderId: "213756811848",
+                    appId: "1:213756811848:web:e7098e7880ad4fa96d167d"
+                };
+
+                firebaseApp = initializeApp(firebaseConfig);
+                messaging = getMessaging(firebaseApp);
+
+                // Lyssna på förgrunds-notiser
+                onMessage(messaging, (payload) => {
+                    console.log('dag365: Förgrunds-notis mottagen', payload);
+                    showLocalNotification(payload);
+                });
+
+                return true;
+            } catch (error) {
+                console.error('dag365: Kunde inte ladda Firebase', error);
+                return false;
+            }
+        }
+
+        // Visa lokal notis (när appen är öppen)
+        function showLocalNotification(payload) {
+            const title = payload.notification?.title || '🇸🇪 Sverige tävlar!';
+            const body = payload.notification?.body || '';
+
+            if (Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: '/icon-192.png',
+                    badge: '/icon-192.png'
+                });
+            }
+        }
+
+        // Kontrollera notis-status och uppdatera knapp
+        function updateNotifyButton() {
+            const token = localStorage.getItem('dag365_fcm_token');
+
+            if (!('Notification' in window)) {
+                notifyBtn.style.display = 'none';
+                return;
+            }
+
+            if (Notification.permission === 'granted' && token) {
+                notifyBtn.textContent = '🔔 Notiser på';
+                notifyBtn.classList.add('show');
+                notifyBtn.style.opacity = '0.7';
+            } else if (Notification.permission === 'denied') {
+                notifyBtn.textContent = '🔕 Blockerade';
+                notifyBtn.classList.add('show');
+                notifyBtn.style.opacity = '0.5';
+            } else {
+                notifyBtn.textContent = '🔔 Notiser';
+                notifyBtn.classList.add('show');
+            }
+        }
+
+        // Begär tillåtelse och registrera token
+        async function requestNotificationPermission() {
+            try {
+                // Registrera Firebase messaging service worker
+                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+                console.log('dag365: Firebase SW registrerad', registration);
+
+                // Ladda Firebase
+                const loaded = await loadFirebase();
+                if (!loaded) {
+                    alert('Kunde inte ladda notis-tjänsten. Försök igen.');
+                    return;
+                }
+
+                // Begär tillåtelse
+                const permission = await Notification.requestPermission();
+                console.log('dag365: Notis-tillåtelse:', permission);
+
+                if (permission !== 'granted') {
+                    alert('Du behöver tillåta notiser för att få OS-uppdateringar.');
+                    updateNotifyButton();
+                    return;
+                }
+
+                // Hämta FCM token
+                const { getToken } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js');
+                const token = await getToken(messaging, {
+                    vapidKey: VAPID_KEY,
+                    serviceWorkerRegistration: registration
+                });
+
+                if (token) {
+                    console.log('dag365: FCM Token:', token);
+                    localStorage.setItem('dag365_fcm_token', token);
+
+                    // Här skulle vi skicka token till en backend
+                    // För nu sparar vi bara lokalt
+                    console.log('dag365: Token sparad! Kopiera denna för att skicka testnotis:');
+                    console.log(token);
+
+                    alert('🎉 Notiser aktiverade!\n\nDu kommer få påminnelser innan svenska OS-tävlingar börjar.');
+                } else {
+                    console.error('dag365: Ingen token mottagen');
+                    alert('Kunde inte aktivera notiser. Försök igen.');
+                }
+
+                updateNotifyButton();
+
+            } catch (error) {
+                console.error('dag365: Notis-fel:', error);
+                alert('Något gick fel: ' + error.message);
+            }
+        }
+
+        // Notis-knapp klick
+        notifyBtn.addEventListener('click', async () => {
+            const token = localStorage.getItem('dag365_fcm_token');
+
+            if (Notification.permission === 'granted' && token) {
+                // Redan aktiverat - visa info
+                if (confirm('Notiser är redan aktiverade! ✅\n\nVill du visa din enhets-token? (för debugging)')) {
+                    console.log('FCM Token:', token);
+                    alert('Token loggad till konsolen (F12)');
+                }
+            } else {
+                await requestNotificationPermission();
+            }
+        });
+
+        // Initiera notis-knapp
+        updateNotifyButton();
     </script>
 </body>
 </html>
