@@ -159,7 +159,7 @@ const sportIcons = {
  * Kollar om någon tävling börjar inom 30 minuter och skickar notiser
  */
 exports.sendScheduledNotifications = functions
-    .region('europe-west1')
+    .region('europe-north2')
     .pubsub.schedule('every 15 minutes')
     .timeZone('Europe/Stockholm')
     .onRun(async (context) => {
@@ -269,7 +269,7 @@ exports.sendScheduledNotifications = functions
  * HTTP endpoint för att testa notiser (kan tas bort i produktion)
  */
 exports.testNotification = functions
-    .region('europe-west1')
+    .region('europe-north2')
     .https.onRequest(async (req, res) => {
         // CORS
         res.set('Access-Control-Allow-Origin', '*');
