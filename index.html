@@ -1058,8 +1058,75 @@
             gap: 0.3rem;
         }
 
+        .olympics-actions {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .olympics-toggle {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .olympics-toggle:hover {
+            border-color: #ffd700;
+            background: var(--card-hover);
+        }
+
+        .olympics-grid.expanded {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .olympics-card .notify-toggle {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            opacity: 0.4;
+            transition: all 0.2s;
+            padding: 0.2rem;
+        }
+
+        .olympics-card .notify-toggle:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .olympics-card .notify-toggle.active {
+            opacity: 1;
+        }
+
+        .olympics-card {
+            position: relative;
+        }
+
+        @media (max-width: 900px) {
+            .olympics-grid.expanded {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         @media (max-width: 700px) {
             .olympics-grid {
+                grid-template-columns: 1fr;
+            }
+            .olympics-grid.expanded {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .olympics-grid.expanded {
                 grid-template-columns: 1fr;
             }
         }
@@ -1243,7 +1310,33 @@
                 </div>
             </div>
         </div>
-        
+
+        <div class="olympics-section">
+            <div class="section-header">
+                <h2 class="section-title">🇸🇪 OS Milano-Cortina 2026</h2>
+                <div class="section-nav olympics-nav">
+                    <button class="olympics-filter active" data-sport="all">Alla</button>
+                    <button class="olympics-filter" data-sport="hockey">🏒</button>
+                    <button class="olympics-filter" data-sport="curling">🥌</button>
+                    <button class="olympics-filter" data-sport="skiing">⛷️</button>
+                    <button class="olympics-filter" data-sport="biathlon">🎯</button>
+                    <button class="olympics-filter" data-sport="alpine">🏔️</button>
+                    <button class="olympics-filter" data-sport="freestyle">🎿</button>
+                    <button class="olympics-filter" data-sport="snowboard">🏂</button>
+                    <button class="olympics-filter" data-sport="jumping">🦅</button>
+                </div>
+            </div>
+            <div class="olympics-grid" id="olympics-grid">
+                <div class="olympics-card">
+                    <div class="olympics-time">⏳</div>
+                    <div class="olympics-event">Laddar OS-schema...</div>
+                </div>
+            </div>
+            <div class="olympics-actions">
+                <button id="olympics-show-all" class="olympics-toggle">Visa hela schemat ▼</button>
+            </div>
+        </div>
+
         <div class="section-header">
             <h2 class="section-title">Årskalender <span id="calendar-year">2025</span></h2>
             <div class="section-nav">
@@ -1286,29 +1379,6 @@
                     <button id="next-quote">Nästa →</button>
                     <button id="random-quote">🎲 Slumpa</button>
                     <span class="quote-counter" id="quote-counter">1/50</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="olympics-section">
-            <div class="section-header">
-                <h2 class="section-title">🇸🇪 OS Milano-Cortina 2026</h2>
-                <div class="section-nav olympics-nav">
-                    <button class="olympics-filter active" data-sport="all">Alla</button>
-                    <button class="olympics-filter" data-sport="hockey">🏒</button>
-                    <button class="olympics-filter" data-sport="curling">🥌</button>
-                    <button class="olympics-filter" data-sport="skiing">⛷️</button>
-                    <button class="olympics-filter" data-sport="biathlon">🎯</button>
-                    <button class="olympics-filter" data-sport="alpine">🏔️</button>
-                    <button class="olympics-filter" data-sport="freestyle">🎿</button>
-                    <button class="olympics-filter" data-sport="snowboard">🏂</button>
-                    <button class="olympics-filter" data-sport="jumping">🦅</button>
-                </div>
-            </div>
-            <div class="olympics-grid" id="olympics-grid">
-                <div class="olympics-card">
-                    <div class="olympics-time">⏳</div>
-                    <div class="olympics-event">Laddar OS-schema...</div>
                 </div>
             </div>
         </div>
@@ -3108,18 +3178,47 @@
         ];
 
         let currentOlympicsFilter = 'all';
+        let olympicsShowAll = false;
+
+        // Ladda sparade notis-val från localStorage
+        function getNotifyEvents() {
+            try {
+                return JSON.parse(localStorage.getItem('dag365_notify_events') || '[]');
+            } catch { return []; }
+        }
+
+        function saveNotifyEvents(events) {
+            localStorage.setItem('dag365_notify_events', JSON.stringify(events));
+        }
+
+        function toggleEventNotify(eventId) {
+            let notifyEvents = getNotifyEvents();
+            if (notifyEvents.includes(eventId)) {
+                notifyEvents = notifyEvents.filter(e => e !== eventId);
+            } else {
+                notifyEvents.push(eventId);
+            }
+            saveNotifyEvents(notifyEvents);
+            renderOlympics();
+        }
+
+        function getEventId(event) {
+            return `${event.date}_${event.time}_${event.sport}`;
+        }
 
         function renderOlympics() {
             const grid = document.getElementById('olympics-grid');
+            const toggleBtn = document.getElementById('olympics-show-all');
             const now = new Date();
+            const notifyEvents = getNotifyEvents();
 
             // Filtrera och sortera events
             let events = olympicsEvents
                 .filter(e => currentOlympicsFilter === 'all' || e.sport === currentOlympicsFilter)
                 .map(e => {
                     const eventDate = new Date(`${e.date}T${e.time}:00`);
-                    const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000); // +2h
-                    return { ...e, eventDate, endDate };
+                    const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
+                    return { ...e, eventDate, endDate, id: getEventId(e) };
                 })
                 .sort((a, b) => a.eventDate - b.eventDate);
 
@@ -3128,26 +3227,45 @@
             const upcomingEvents = events.filter(e => e.eventDate > now);
             const pastEvents = events.filter(e => e.endDate < now);
 
-            // Visa live först, sen kommande (max 6 totalt)
-            const displayEvents = [...liveEvents, ...upcomingEvents].slice(0, 6);
+            // Bestäm vilka som ska visas
+            let displayEvents;
+            if (olympicsShowAll) {
+                displayEvents = [...liveEvents, ...upcomingEvents];
+                grid.classList.add('expanded');
+                toggleBtn.textContent = 'Visa färre ▲';
+            } else {
+                displayEvents = [...liveEvents, ...upcomingEvents].slice(0, 6);
+                grid.classList.remove('expanded');
+                toggleBtn.textContent = `Visa hela schemat (${upcomingEvents.length} tävlingar) ▼`;
+            }
 
             if (displayEvents.length === 0) {
-                // Visa senaste om inget kommande
                 const recentPast = pastEvents.slice(-3);
                 if (recentPast.length > 0) {
-                    grid.innerHTML = recentPast.map(e => createOlympicsCard(e, now, true)).join('');
+                    grid.innerHTML = recentPast.map(e => createOlympicsCard(e, now, true, notifyEvents)).join('');
                 } else {
                     grid.innerHTML = `<div class="olympics-card"><div class="olympics-event">Inga fler svenska tävlingar i OS 2026</div></div>`;
                 }
+                toggleBtn.style.display = 'none';
                 return;
             }
 
-            grid.innerHTML = displayEvents.map(e => createOlympicsCard(e, now, false)).join('');
+            toggleBtn.style.display = upcomingEvents.length > 6 ? 'inline-block' : 'none';
+            grid.innerHTML = displayEvents.map(e => createOlympicsCard(e, now, false, notifyEvents)).join('');
+
+            // Lägg till event listeners för notis-knappar
+            grid.querySelectorAll('.notify-toggle').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleEventNotify(btn.dataset.eventId);
+                });
+            });
         }
 
-        function createOlympicsCard(event, now, isPast) {
+        function createOlympicsCard(event, now, isPast, notifyEvents) {
             const isLive = now >= event.eventDate && now <= event.endDate;
             const isToday = event.eventDate.toDateString() === now.toDateString();
+            const isNotifyOn = notifyEvents.includes(event.id);
 
             const sportIcons = {
                 hockey: '🏒',
@@ -3157,7 +3275,7 @@
                 freestyle: '🎿',
                 snowboard: '🏂',
                 jumping: '🦅',
-                biathlon: '🎿'
+                biathlon: '🎯'
             };
 
             const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
@@ -3167,8 +3285,17 @@
             if (isLive) cardClass += ' live';
             else if (isToday) cardClass += ' today';
 
+            const notifyBtn = !isPast ? `
+                <button class="notify-toggle ${isNotifyOn ? 'active' : ''}"
+                        data-event-id="${event.id}"
+                        title="${isNotifyOn ? 'Notis på - klicka för att stänga av' : 'Klicka för påminnelse'}">
+                    ${isNotifyOn ? '🔔' : '🔕'}
+                </button>
+            ` : '';
+
             return `
                 <div class="${cardClass}">
+                    ${notifyBtn}
                     <div class="olympics-date">${isPast ? 'Avslutad' : dateStr}</div>
                     <div class="olympics-time">${event.time}</div>
                     <div class="olympics-sport">${sportIcons[event.sport] || ''} ${event.type}</div>
@@ -3185,6 +3312,12 @@
                 currentOlympicsFilter = btn.dataset.sport;
                 renderOlympics();
             });
+        });
+
+        // Visa alla/färre toggle
+        document.getElementById('olympics-show-all').addEventListener('click', () => {
+            olympicsShowAll = !olympicsShowAll;
+            renderOlympics();
         });
 
         // Initialize Olympics
