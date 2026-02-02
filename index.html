@@ -945,6 +945,113 @@
             }
         }
         
+        /* Olympics Section */
+        .olympics-section {
+            margin-top: 2rem;
+        }
+
+        .olympics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .olympics-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.2s;
+        }
+
+        .olympics-card:hover {
+            background: var(--card-hover);
+            border-color: #ffd700;
+        }
+
+        .olympics-card.live {
+            border-color: #ff4444;
+            background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, var(--card) 100%);
+            animation: pulse-live 2s infinite;
+        }
+
+        .olympics-card.today {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, var(--card) 100%);
+        }
+
+        @keyframes pulse-live {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(255, 68, 68, 0); }
+        }
+
+        .olympics-date {
+            font-size: 0.65rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+
+        .olympics-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 0.3rem;
+        }
+
+        .olympics-card.live .olympics-time {
+            color: #ff4444;
+        }
+
+        .olympics-card.live .olympics-time::before {
+            content: '🔴 LIVE ';
+            font-size: 0.8rem;
+        }
+
+        .olympics-sport {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .olympics-event {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .olympics-filter {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .olympics-filter:hover,
+        .olympics-filter.active {
+            border-color: #ffd700;
+            color: var(--text);
+            background: var(--card-hover);
+        }
+
+        @media (max-width: 700px) {
+            .olympics-grid {
+                grid-template-columns: 1fr;
+            }
+            .olympics-section .section-nav {
+                flex-wrap: wrap;
+                gap: 0.3rem;
+            }
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -1170,6 +1277,25 @@
             </div>
         </div>
         
+        <div class="olympics-section">
+            <div class="section-header">
+                <h2 class="section-title">🇸🇪 OS Milano-Cortina 2026</h2>
+                <div class="section-nav">
+                    <button class="olympics-filter active" data-sport="all">Alla</button>
+                    <button class="olympics-filter" data-sport="hockey">🏒 Hockey</button>
+                    <button class="olympics-filter" data-sport="curling">🥌 Curling</button>
+                    <button class="olympics-filter" data-sport="skiing">⛷️ Skidor</button>
+                    <button class="olympics-filter" data-sport="biathlon">🎿 Skytte</button>
+                </div>
+            </div>
+            <div class="olympics-grid" id="olympics-grid">
+                <div class="olympics-card">
+                    <div class="olympics-time">⏳</div>
+                    <div class="olympics-event">Laddar OS-schema...</div>
+                </div>
+            </div>
+        </div>
+
         <div class="news-section">
             <div class="section-header">
                 <h2 class="section-title">Nyheter</h2>
@@ -2830,7 +2956,162 @@
         
         // Initialize quotes
         initQuote();
-        
+
+        // ============ OS 2026 MILANO-CORTINA ============
+
+        const olympicsEvents = [
+            // Curling Mixed Dubbel
+            { date: '2026-02-04', time: '19:05', sport: 'curling', event: 'Sverige – Sydkorea', type: 'Mixed dubbel' },
+            { date: '2026-02-05', time: '10:05', sport: 'curling', event: 'Sverige – Tjeckien', type: 'Mixed dubbel' },
+            { date: '2026-02-05', time: '19:05', sport: 'curling', event: 'Estland – Sverige', type: 'Mixed dubbel' },
+            { date: '2026-02-06', time: '10:05', sport: 'curling', event: 'Sverige – Storbritannien', type: 'Mixed dubbel' },
+
+            // Hockey Damer
+            { date: '2026-02-05', time: '12:10', sport: 'hockey', event: 'Sverige – Tyskland', type: 'Damer gruppspel' },
+            { date: '2026-02-07', time: '14:40', sport: 'hockey', event: 'Sverige – Italien', type: 'Damer gruppspel' },
+            { date: '2026-02-08', time: '16:40', sport: 'hockey', event: 'Frankrike – Sverige', type: 'Damer gruppspel' },
+            { date: '2026-02-10', time: '12:10', sport: 'hockey', event: 'Japan – Sverige', type: 'Damer gruppspel' },
+
+            // Längdskidor
+            { date: '2026-02-07', time: '13:00', sport: 'skiing', event: 'Skiathlon 7,5+7,5 km', type: 'Längd damer' },
+            { date: '2026-02-08', time: '12:30', sport: 'skiing', event: 'Skiathlon 10+10 km', type: 'Längd herrar' },
+            { date: '2026-02-10', time: '11:45', sport: 'skiing', event: 'Sprint final', type: 'Längd' },
+            { date: '2026-02-12', time: '13:00', sport: 'skiing', event: '10 km klassisk', type: 'Längd damer' },
+            { date: '2026-02-13', time: '12:00', sport: 'skiing', event: '10 km fri stil', type: 'Längd herrar' },
+            { date: '2026-02-15', time: '12:00', sport: 'skiing', event: 'Stafett 4x10 km', type: 'Längd herrar' },
+            { date: '2026-02-16', time: '12:00', sport: 'skiing', event: 'Stafett 4x5 km', type: 'Längd damer' },
+            { date: '2026-02-19', time: '11:00', sport: 'skiing', event: 'Lagsprint', type: 'Längd' },
+            { date: '2026-02-21', time: '12:30', sport: 'skiing', event: '50 km masstart', type: 'Längd herrar' },
+            { date: '2026-02-22', time: '12:30', sport: 'skiing', event: '30 km masstart', type: 'Längd damer' },
+
+            // Skidskytte
+            { date: '2026-02-08', time: '14:05', sport: 'biathlon', event: 'Mixedstafett', type: 'Skidskytte' },
+            { date: '2026-02-10', time: '13:30', sport: 'biathlon', event: 'Distans 20 km', type: 'Skidskytte herrar' },
+            { date: '2026-02-11', time: '14:15', sport: 'biathlon', event: 'Distans 15 km', type: 'Skidskytte damer' },
+            { date: '2026-02-13', time: '14:00', sport: 'biathlon', event: 'Sprint 10 km', type: 'Skidskytte herrar' },
+            { date: '2026-02-14', time: '14:00', sport: 'biathlon', event: 'Sprint 7,5 km', type: 'Skidskytte damer' },
+            { date: '2026-02-15', time: '14:45', sport: 'biathlon', event: 'Jaktstart 10 km', type: 'Skidskytte damer' },
+            { date: '2026-02-15', time: '11:15', sport: 'biathlon', event: 'Jaktstart 12,5 km', type: 'Skidskytte herrar' },
+            { date: '2026-02-18', time: '14:30', sport: 'biathlon', event: 'Stafett 4x7,5 km', type: 'Skidskytte herrar' },
+            { date: '2026-02-19', time: '14:30', sport: 'biathlon', event: 'Stafett 4x6 km', type: 'Skidskytte damer' },
+            { date: '2026-02-20', time: '14:30', sport: 'biathlon', event: 'Masstart 15 km', type: 'Skidskytte herrar' },
+            { date: '2026-02-21', time: '14:30', sport: 'biathlon', event: 'Masstart 12,5 km', type: 'Skidskytte damer' },
+
+            // Curling Damer
+            { date: '2026-02-11', time: '09:05', sport: 'curling', event: 'USA – Sverige', type: 'Damer' },
+            { date: '2026-02-11', time: '19:05', sport: 'curling', event: 'Sverige – Japan', type: 'Damer' },
+            { date: '2026-02-12', time: '14:05', sport: 'curling', event: 'Danmark – Sverige', type: 'Damer' },
+            { date: '2026-02-13', time: '09:05', sport: 'curling', event: 'Sverige – Kanada', type: 'Damer' },
+            { date: '2026-02-14', time: '14:05', sport: 'curling', event: 'Sverige – Schweiz', type: 'Damer' },
+            { date: '2026-02-15', time: '14:05', sport: 'curling', event: 'Sydkorea – Sverige', type: 'Damer' },
+            { date: '2026-02-16', time: '09:05', sport: 'curling', event: 'Sverige – Kina', type: 'Damer' },
+            { date: '2026-02-17', time: '09:05', sport: 'curling', event: 'Storbritannien – Sverige', type: 'Damer' },
+            { date: '2026-02-18', time: '09:05', sport: 'curling', event: 'Sverige – Norge', type: 'Damer' },
+
+            // Curling Herrar
+            { date: '2026-02-10', time: '19:05', sport: 'curling', event: 'Sverige – Italien', type: 'Herrar' },
+            { date: '2026-02-11', time: '14:05', sport: 'curling', event: 'Storbritannien – Sverige', type: 'Herrar' },
+            { date: '2026-02-12', time: '19:05', sport: 'curling', event: 'Kanada – Sverige', type: 'Herrar' },
+            { date: '2026-02-13', time: '14:05', sport: 'curling', event: 'Sverige – USA', type: 'Herrar' },
+            { date: '2026-02-14', time: '09:05', sport: 'curling', event: 'Norge – Sverige', type: 'Herrar' },
+            { date: '2026-02-15', time: '09:05', sport: 'curling', event: 'Sverige – Kina', type: 'Herrar' },
+            { date: '2026-02-16', time: '14:05', sport: 'curling', event: 'Schweiz – Sverige', type: 'Herrar' },
+            { date: '2026-02-17', time: '14:05', sport: 'curling', event: 'Sverige – Danmark', type: 'Herrar' },
+            { date: '2026-02-18', time: '14:05', sport: 'curling', event: 'Japan – Sverige', type: 'Herrar' },
+
+            // Hockey Herrar
+            { date: '2026-02-12', time: '12:10', sport: 'hockey', event: 'Finland – Sverige', type: 'Herrar gruppspel' },
+            { date: '2026-02-14', time: '12:10', sport: 'hockey', event: 'Sverige – Slovakien', type: 'Herrar gruppspel' },
+            { date: '2026-02-16', time: '12:10', sport: 'hockey', event: 'Sverige – Italien', type: 'Herrar gruppspel' },
+
+            // Finaler
+            { date: '2026-02-19', time: '19:10', sport: 'hockey', event: 'OS-final', type: 'Hockey damer' },
+            { date: '2026-02-20', time: '14:05', sport: 'curling', event: 'OS-final', type: 'Curling damer' },
+            { date: '2026-02-21', time: '14:05', sport: 'curling', event: 'OS-final', type: 'Curling herrar' },
+            { date: '2026-02-22', time: '14:10', sport: 'hockey', event: 'OS-final', type: 'Hockey herrar' },
+        ];
+
+        let currentOlympicsFilter = 'all';
+
+        function renderOlympics() {
+            const grid = document.getElementById('olympics-grid');
+            const now = new Date();
+
+            // Filtrera och sortera events
+            let events = olympicsEvents
+                .filter(e => currentOlympicsFilter === 'all' || e.sport === currentOlympicsFilter)
+                .map(e => {
+                    const eventDate = new Date(`${e.date}T${e.time}:00`);
+                    const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000); // +2h
+                    return { ...e, eventDate, endDate };
+                })
+                .sort((a, b) => a.eventDate - b.eventDate);
+
+            // Hitta live och kommande events
+            const liveEvents = events.filter(e => now >= e.eventDate && now <= e.endDate);
+            const upcomingEvents = events.filter(e => e.eventDate > now);
+            const pastEvents = events.filter(e => e.endDate < now);
+
+            // Visa live först, sen kommande (max 6 totalt)
+            const displayEvents = [...liveEvents, ...upcomingEvents].slice(0, 6);
+
+            if (displayEvents.length === 0) {
+                // Visa senaste om inget kommande
+                const recentPast = pastEvents.slice(-3);
+                if (recentPast.length > 0) {
+                    grid.innerHTML = recentPast.map(e => createOlympicsCard(e, now, true)).join('');
+                } else {
+                    grid.innerHTML = `<div class="olympics-card"><div class="olympics-event">Inga fler svenska tävlingar i OS 2026</div></div>`;
+                }
+                return;
+            }
+
+            grid.innerHTML = displayEvents.map(e => createOlympicsCard(e, now, false)).join('');
+        }
+
+        function createOlympicsCard(event, now, isPast) {
+            const isLive = now >= event.eventDate && now <= event.endDate;
+            const isToday = event.eventDate.toDateString() === now.toDateString();
+
+            const sportIcons = {
+                hockey: '🏒',
+                curling: '🥌',
+                skiing: '⛷️',
+                biathlon: '🎿'
+            };
+
+            const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
+            const dateStr = `${dayNames[event.eventDate.getDay()]} ${event.eventDate.getDate()}/${event.eventDate.getMonth() + 1}`;
+
+            let cardClass = 'olympics-card';
+            if (isLive) cardClass += ' live';
+            else if (isToday) cardClass += ' today';
+
+            return `
+                <div class="${cardClass}">
+                    <div class="olympics-date">${isPast ? 'Avslutad' : dateStr}</div>
+                    <div class="olympics-time">${event.time}</div>
+                    <div class="olympics-sport">${sportIcons[event.sport] || ''} ${event.type}</div>
+                    <div class="olympics-event">${event.event}</div>
+                </div>
+            `;
+        }
+
+        // Olympics filter click handlers
+        document.querySelectorAll('.olympics-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.olympics-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentOlympicsFilter = btn.dataset.sport;
+                renderOlympics();
+            });
+        });
+
+        // Initialize Olympics
+        renderOlympics();
+        // Update every minute
+        setInterval(renderOlympics, 60000);
+
         // ============ PWA / SERVICE WORKER ============
         
         // Register Service Worker
