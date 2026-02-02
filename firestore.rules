@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Användare kan skapa och uppdatera sin egen notis-prenumeration
+    match /subscribers/{token} {
+      allow read: if false; // Endast backend läser
+      allow create, update: if true; // Vem som helst kan registrera sig
+      allow delete: if false;
+    }
+  }
+}
