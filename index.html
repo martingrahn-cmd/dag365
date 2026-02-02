@@ -994,9 +994,24 @@
             }
         }
         
-        @media (max-width: 400px) {
+        @media (max-width: 500px) {
             .year-calendar {
-                grid-template-columns: 1fr;
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 1rem;
+                padding-bottom: 1rem;
+            }
+            .year-calendar::-webkit-scrollbar {
+                display: none;
+            }
+            .year-calendar {
+                scrollbar-width: none;
+            }
+            .month-card {
+                flex: 0 0 85%;
+                scroll-snap-align: center;
             }
         }
     </style>
@@ -2362,8 +2377,22 @@
                 monthCard.appendChild(weeksContainer);
                 container.appendChild(monthCard);
             }
+
+            // Scrolla till aktuell månad på mobil
+            scrollToCurrentMonth();
         }
-        
+
+        function scrollToCurrentMonth() {
+            if (window.innerWidth > 500) return;
+            const container = document.getElementById('year-calendar');
+            const currentMonth = container.querySelector('.month-card.current');
+            if (currentMonth) {
+                setTimeout(() => {
+                    currentMonth.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+                }, 100);
+            }
+        }
+
         // Calendar navigation
         document.getElementById('prev-year').addEventListener('click', () => {
             displayYear--;
