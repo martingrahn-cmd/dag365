@@ -1042,13 +1042,14 @@
             background: var(--card-hover);
         }
 
+        .olympics-nav {
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
         @media (max-width: 700px) {
             .olympics-grid {
                 grid-template-columns: 1fr;
-            }
-            .olympics-section .section-nav {
-                flex-wrap: wrap;
-                gap: 0.3rem;
             }
         }
 
@@ -1280,12 +1281,16 @@
         <div class="olympics-section">
             <div class="section-header">
                 <h2 class="section-title">🇸🇪 OS Milano-Cortina 2026</h2>
-                <div class="section-nav">
+                <div class="section-nav olympics-nav">
                     <button class="olympics-filter active" data-sport="all">Alla</button>
-                    <button class="olympics-filter" data-sport="hockey">🏒 Hockey</button>
-                    <button class="olympics-filter" data-sport="curling">🥌 Curling</button>
-                    <button class="olympics-filter" data-sport="skiing">⛷️ Skidor</button>
-                    <button class="olympics-filter" data-sport="biathlon">🎿 Skytte</button>
+                    <button class="olympics-filter" data-sport="hockey">🏒</button>
+                    <button class="olympics-filter" data-sport="curling">🥌</button>
+                    <button class="olympics-filter" data-sport="skiing">⛷️</button>
+                    <button class="olympics-filter" data-sport="biathlon">🎯</button>
+                    <button class="olympics-filter" data-sport="alpine">🏔️</button>
+                    <button class="olympics-filter" data-sport="freestyle">🎿</button>
+                    <button class="olympics-filter" data-sport="snowboard">🏂</button>
+                    <button class="olympics-filter" data-sport="jumping">🦅</button>
                 </div>
             </div>
             <div class="olympics-grid" id="olympics-grid">
@@ -2960,19 +2965,23 @@
         // ============ OS 2026 MILANO-CORTINA ============
 
         const olympicsEvents = [
-            // Curling Mixed Dubbel
+            // Curling Mixed Dubbel (4-6 feb)
             { date: '2026-02-04', time: '19:05', sport: 'curling', event: 'Sverige – Sydkorea', type: 'Mixed dubbel' },
             { date: '2026-02-05', time: '10:05', sport: 'curling', event: 'Sverige – Tjeckien', type: 'Mixed dubbel' },
             { date: '2026-02-05', time: '19:05', sport: 'curling', event: 'Estland – Sverige', type: 'Mixed dubbel' },
             { date: '2026-02-06', time: '10:05', sport: 'curling', event: 'Sverige – Storbritannien', type: 'Mixed dubbel' },
 
-            // Hockey Damer
+            // Snowboard Big Air (5-6 feb)
+            { date: '2026-02-05', time: '19:30', sport: 'snowboard', event: 'Big Air kval', type: 'Snowboard herrar' },
+            { date: '2026-02-06', time: '19:30', sport: 'snowboard', event: 'Big Air final', type: 'Snowboard herrar' },
+
+            // Hockey Damer (5-10 feb)
             { date: '2026-02-05', time: '12:10', sport: 'hockey', event: 'Sverige – Tyskland', type: 'Damer gruppspel' },
             { date: '2026-02-07', time: '14:40', sport: 'hockey', event: 'Sverige – Italien', type: 'Damer gruppspel' },
             { date: '2026-02-08', time: '16:40', sport: 'hockey', event: 'Frankrike – Sverige', type: 'Damer gruppspel' },
             { date: '2026-02-10', time: '12:10', sport: 'hockey', event: 'Japan – Sverige', type: 'Damer gruppspel' },
 
-            // Längdskidor
+            // Längdskidor (7-22 feb)
             { date: '2026-02-07', time: '13:00', sport: 'skiing', event: 'Skiathlon 7,5+7,5 km', type: 'Längd damer' },
             { date: '2026-02-08', time: '12:30', sport: 'skiing', event: 'Skiathlon 10+10 km', type: 'Längd herrar' },
             { date: '2026-02-10', time: '11:45', sport: 'skiing', event: 'Sprint final', type: 'Längd' },
@@ -2984,20 +2993,52 @@
             { date: '2026-02-21', time: '12:30', sport: 'skiing', event: '50 km masstart', type: 'Längd herrar' },
             { date: '2026-02-22', time: '12:30', sport: 'skiing', event: '30 km masstart', type: 'Längd damer' },
 
-            // Skidskytte
+            // Freeski Slopestyle (7-10 feb)
+            { date: '2026-02-07', time: '10:30', sport: 'freestyle', event: 'Slopestyle kval', type: 'Freeski damer' },
+            { date: '2026-02-07', time: '14:00', sport: 'freestyle', event: 'Slopestyle kval', type: 'Freeski herrar' },
+            { date: '2026-02-09', time: '12:30', sport: 'freestyle', event: 'Slopestyle final', type: 'Freeski damer' },
+            { date: '2026-02-10', time: '12:30', sport: 'freestyle', event: 'Slopestyle final', type: 'Freeski herrar' },
+
+            // Skidskytte (8-21 feb)
             { date: '2026-02-08', time: '14:05', sport: 'biathlon', event: 'Mixedstafett', type: 'Skidskytte' },
             { date: '2026-02-10', time: '13:30', sport: 'biathlon', event: 'Distans 20 km', type: 'Skidskytte herrar' },
             { date: '2026-02-11', time: '14:15', sport: 'biathlon', event: 'Distans 15 km', type: 'Skidskytte damer' },
             { date: '2026-02-13', time: '14:00', sport: 'biathlon', event: 'Sprint 10 km', type: 'Skidskytte herrar' },
             { date: '2026-02-14', time: '14:00', sport: 'biathlon', event: 'Sprint 7,5 km', type: 'Skidskytte damer' },
-            { date: '2026-02-15', time: '14:45', sport: 'biathlon', event: 'Jaktstart 10 km', type: 'Skidskytte damer' },
             { date: '2026-02-15', time: '11:15', sport: 'biathlon', event: 'Jaktstart 12,5 km', type: 'Skidskytte herrar' },
+            { date: '2026-02-15', time: '14:45', sport: 'biathlon', event: 'Jaktstart 10 km', type: 'Skidskytte damer' },
             { date: '2026-02-18', time: '14:30', sport: 'biathlon', event: 'Stafett 4x7,5 km', type: 'Skidskytte herrar' },
             { date: '2026-02-19', time: '14:30', sport: 'biathlon', event: 'Stafett 4x6 km', type: 'Skidskytte damer' },
             { date: '2026-02-20', time: '14:30', sport: 'biathlon', event: 'Masstart 15 km', type: 'Skidskytte herrar' },
             { date: '2026-02-21', time: '14:30', sport: 'biathlon', event: 'Masstart 12,5 km', type: 'Skidskytte damer' },
 
-            // Curling Damer
+            // Snowboard Big Air Damer (8-9 feb)
+            { date: '2026-02-08', time: '19:30', sport: 'snowboard', event: 'Big Air kval', type: 'Snowboard damer' },
+            { date: '2026-02-09', time: '19:30', sport: 'snowboard', event: 'Big Air final', type: 'Snowboard damer' },
+
+            // Puckelpist / Freestyle Moguls (10 feb)
+            { date: '2026-02-10', time: '11:15', sport: 'freestyle', event: 'Puckelpist kval', type: 'Freestyle herrar' },
+            { date: '2026-02-10', time: '19:30', sport: 'freestyle', event: 'Puckelpist final', type: 'Freestyle herrar (Wallberg)' },
+
+            // Backhoppning (10-16 feb)
+            { date: '2026-02-10', time: '18:45', sport: 'jumping', event: 'Mixed team', type: 'Backhoppning' },
+            { date: '2026-02-11', time: '18:45', sport: 'jumping', event: 'Normalbacke', type: 'Backhoppning damer' },
+            { date: '2026-02-13', time: '18:45', sport: 'jumping', event: 'Normalbacke', type: 'Backhoppning herrar' },
+            { date: '2026-02-15', time: '18:45', sport: 'jumping', event: 'Stora backen', type: 'Backhoppning herrar' },
+            { date: '2026-02-16', time: '19:00', sport: 'jumping', event: 'Super team', type: 'Backhoppning herrar' },
+
+            // Nordisk kombination (11-17 feb)
+            { date: '2026-02-11', time: '10:00', sport: 'jumping', event: 'Gundersen normalbacke + 10km', type: 'Nordisk komb. herrar' },
+            { date: '2026-02-14', time: '10:00', sport: 'jumping', event: 'Gundersen normalbacke + 5km', type: 'Nordisk komb. damer' },
+            { date: '2026-02-17', time: '10:00', sport: 'jumping', event: 'Gundersen stora backen + 10km', type: 'Nordisk komb. herrar' },
+
+            // Snowboard Halfpipe (11-13 feb)
+            { date: '2026-02-11', time: '10:30', sport: 'snowboard', event: 'Halfpipe kval', type: 'Snowboard damer' },
+            { date: '2026-02-11', time: '19:30', sport: 'snowboard', event: 'Halfpipe kval', type: 'Snowboard herrar' },
+            { date: '2026-02-12', time: '19:30', sport: 'snowboard', event: 'Halfpipe final', type: 'Snowboard damer' },
+            { date: '2026-02-13', time: '19:30', sport: 'snowboard', event: 'Halfpipe final', type: 'Snowboard herrar' },
+
+            // Curling Damer (11-18 feb)
             { date: '2026-02-11', time: '09:05', sport: 'curling', event: 'USA – Sverige', type: 'Damer' },
             { date: '2026-02-11', time: '19:05', sport: 'curling', event: 'Sverige – Japan', type: 'Damer' },
             { date: '2026-02-12', time: '14:05', sport: 'curling', event: 'Danmark – Sverige', type: 'Damer' },
@@ -3008,7 +3049,7 @@
             { date: '2026-02-17', time: '09:05', sport: 'curling', event: 'Storbritannien – Sverige', type: 'Damer' },
             { date: '2026-02-18', time: '09:05', sport: 'curling', event: 'Sverige – Norge', type: 'Damer' },
 
-            // Curling Herrar
+            // Curling Herrar (10-18 feb)
             { date: '2026-02-10', time: '19:05', sport: 'curling', event: 'Sverige – Italien', type: 'Herrar' },
             { date: '2026-02-11', time: '14:05', sport: 'curling', event: 'Storbritannien – Sverige', type: 'Herrar' },
             { date: '2026-02-12', time: '19:05', sport: 'curling', event: 'Kanada – Sverige', type: 'Herrar' },
@@ -3019,10 +3060,33 @@
             { date: '2026-02-17', time: '14:05', sport: 'curling', event: 'Sverige – Danmark', type: 'Herrar' },
             { date: '2026-02-18', time: '14:05', sport: 'curling', event: 'Japan – Sverige', type: 'Herrar' },
 
-            // Hockey Herrar
+            // Hockey Herrar (12-16 feb)
             { date: '2026-02-12', time: '12:10', sport: 'hockey', event: 'Finland – Sverige', type: 'Herrar gruppspel' },
             { date: '2026-02-14', time: '12:10', sport: 'hockey', event: 'Sverige – Slovakien', type: 'Herrar gruppspel' },
             { date: '2026-02-16', time: '12:10', sport: 'hockey', event: 'Sverige – Italien', type: 'Herrar gruppspel' },
+
+            // Alpint - Storslalom & Slalom (15-18 feb)
+            { date: '2026-02-15', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint damer (Hector)' },
+            { date: '2026-02-15', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint damer (Hector)' },
+            { date: '2026-02-16', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint herrar' },
+            { date: '2026-02-16', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint herrar' },
+            { date: '2026-02-18', time: '10:00', sport: 'alpine', event: 'Slalom åk 1', type: 'Alpint damer (Swenn Larsson)' },
+            { date: '2026-02-18', time: '13:30', sport: 'alpine', event: 'Slalom åk 2', type: 'Alpint damer' },
+
+            // Snowboard Slopestyle (17-18 feb)
+            { date: '2026-02-17', time: '10:30', sport: 'snowboard', event: 'Slopestyle kval', type: 'Snowboard damer' },
+            { date: '2026-02-17', time: '14:00', sport: 'snowboard', event: 'Slopestyle kval', type: 'Snowboard herrar' },
+            { date: '2026-02-18', time: '12:30', sport: 'snowboard', event: 'Slopestyle final', type: 'Snowboard herrar' },
+
+            // Freeski Big Air (18-19 feb)
+            { date: '2026-02-18', time: '19:30', sport: 'freestyle', event: 'Big Air kval', type: 'Freeski herrar' },
+            { date: '2026-02-19', time: '12:30', sport: 'freestyle', event: 'Big Air final', type: 'Freeski herrar' },
+
+            // Skicross (20-21 feb)
+            { date: '2026-02-20', time: '10:00', sport: 'freestyle', event: 'Skicross kval', type: 'Freestyle herrar' },
+            { date: '2026-02-20', time: '13:00', sport: 'freestyle', event: 'Skicross final', type: 'Freestyle herrar' },
+            { date: '2026-02-21', time: '10:00', sport: 'freestyle', event: 'Skicross kval', type: 'Freestyle damer (Näslund)' },
+            { date: '2026-02-21', time: '12:00', sport: 'freestyle', event: 'Skicross final', type: 'Freestyle damer (Näslund)' },
 
             // Finaler
             { date: '2026-02-19', time: '19:10', sport: 'hockey', event: 'OS-final', type: 'Hockey damer' },
@@ -3077,6 +3141,10 @@
                 hockey: '🏒',
                 curling: '🥌',
                 skiing: '⛷️',
+                alpine: '🏔️',
+                freestyle: '🎿',
+                snowboard: '🏂',
+                jumping: '🦅',
                 biathlon: '🎿'
             };
 
