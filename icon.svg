@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a5f"/>
+      <stop offset="100%" style="stop-color:#0f2744"/>
+    </linearGradient>
+    <linearGradient id="sunGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcd34d"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded background -->
+  <rect width="512" height="512" rx="96" ry="96" fill="url(#bgGradient)"/>
+
+  <!-- Sun symbol top right -->
+  <circle cx="400" cy="112" r="40" fill="url(#sunGradient)"/>
+  <g fill="#fcd34d">
+    <rect x="396" y="52" width="8" height="24" rx="4"/>
+    <rect x="396" y="148" width="8" height="24" rx="4"/>
+    <rect x="336" y="108" width="24" height="8" rx="4"/>
+    <rect x="440" y="108" width="24" height="8" rx="4"/>
+    <rect x="350" y="62" width="8" height="20" rx="4" transform="rotate(45 354 72)"/>
+    <rect x="442" y="144" width="8" height="20" rx="4" transform="rotate(45 446 154)"/>
+    <rect x="350" y="144" width="8" height="20" rx="4" transform="rotate(-45 354 154)"/>
+    <rect x="442" y="62" width="8" height="20" rx="4" transform="rotate(-45 446 72)"/>
+  </g>
+
+  <!-- 365 text -->
+  <text x="256" y="340"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="200"
+        font-weight="800"
+        fill="#ffffff"
+        text-anchor="middle">365</text>
+
+  <!-- Subtle underline -->
+  <rect x="100" y="380" width="312" height="8" rx="4" fill="url(#sunGradient)" opacity="0.8"/>
+
+  <!-- Small "dag" text -->
+  <text x="256" y="440"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="48"
+        font-weight="600"
+        fill="#94a3b8"
+        text-anchor="middle"
+        letter-spacing="8">DAG</text>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1170 2532">
+  <!-- iPhone splash screen -->
+  <rect width="1170" height="2532" fill="#0f0f14"/>
+
+  <!-- Logo centered -->
+  <g transform="translate(585, 1100)">
+    <!-- Sun -->
+    <circle cx="180" cy="-200" r="60" fill="#fcd34d"/>
+    <g fill="#fcd34d">
+      <rect x="174" y="-280" width="12" height="36" rx="6"/>
+      <rect x="174" y="-156" width="12" height="36" rx="6"/>
+      <rect x="80" y="-206" width="36" height="12" rx="6"/>
+      <rect x="244" y="-206" width="36" height="12" rx="6"/>
+    </g>
+
+    <!-- 365 text -->
+    <text x="0" y="0"
+          font-family="system-ui, -apple-system, sans-serif"
+          font-size="280"
+          font-weight="800"
+          fill="#ffffff"
+          text-anchor="middle">365</text>
+
+    <!-- Underline -->
+    <rect x="-200" y="60" width="400" height="12" rx="6" fill="#fcd34d" opacity="0.8"/>
+
+    <!-- DAG text -->
+    <text x="0" y="140"
+          font-family="system-ui, -apple-system, sans-serif"
+          font-size="72"
+          font-weight="600"
+          fill="#6b6b7a"
+          text-anchor="middle"
+          letter-spacing="12">DAG</text>
+  </g>
+</svg>
