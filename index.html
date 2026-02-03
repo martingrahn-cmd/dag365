@@ -3379,15 +3379,16 @@
         const notifyBtn = document.getElementById('notify-btn');
         let firebaseApp = null;
         let messaging = null;
+        let firestoreDb = null;
 
         // Ladda Firebase dynamiskt
         async function loadFirebase() {
             if (firebaseApp) return true;
 
             try {
-                // Importera Firebase moduler
                 const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js');
                 const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js');
+                const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
 
                 const firebaseConfig = {
                     apiKey: "AIzaSyDUGbZDv4R4kPHCZez0Xsf5_iv3vqaYhYE",
@@ -3400,8 +3401,8 @@
 
                 firebaseApp = initializeApp(firebaseConfig);
                 messaging = getMessaging(firebaseApp);
+                firestoreDb = getFirestore(firebaseApp);
 
-                // Lyssna på förgrunds-notiser
                 onMessage(messaging, (payload) => {
                     console.log('dag365: Förgrunds-notis mottagen', payload);
                     showLocalNotification(payload);
@@ -3414,7 +3415,52 @@
             }
         }
 
-        // Visa lokal notis (när appen är öppen)
+        // Spara prenumeration till Firestore
+        async function saveSubscriptionToFirestore(token, events) {
+            if (!firestoreDb) {
+                await loadFirebase();
+            }
+            if (!firestoreDb) return;
+
+            try {
+                const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+                await setDoc(doc(firestoreDb, 'subscribers', token), {
+                    token: token,
+                    events: events,
+                    updatedAt: new Date().toISOString()
+                });
+                console.log('dag365: Prenumeration sparad till Firestore');
+            } catch (error) {
+                console.error('dag365: Kunde inte spara till Firestore', error);
+            }
+        }
+
+        // Synka valda tävlingar till Firestore
+        async function syncNotifyEventsToFirestore() {
+            const token = localStorage.getItem('dag365_fcm_token');
+            if (!token) return;
+
+            const events = getNotifyEvents();
+            await saveSubscriptionToFirestore(token, events);
+        }
+
+        // Uppdatera toggleEventNotify för att synka till Firestore
+        const originalToggleEventNotify = toggleEventNotify;
+        toggleEventNotify = async function(eventId) {
+            let notifyEvents = getNotifyEvents();
+            if (notifyEvents.includes(eventId)) {
+                notifyEvents = notifyEvents.filter(e => e !== eventId);
+            } else {
+                notifyEvents.push(eventId);
+            }
+            saveNotifyEvents(notifyEvents);
+            renderOlympics();
+
+            // Synka till Firestore
+            await syncNotifyEventsToFirestore();
+        };
+
+        // Visa lokal notis
         function showLocalNotification(payload) {
             const title = payload.notification?.title || '🇸🇪 Sverige tävlar!';
             const body = payload.notification?.body || '';
@@ -3454,18 +3500,15 @@
         // Begär tillåtelse och registrera token
         async function requestNotificationPermission() {
             try {
-                // Registrera Firebase messaging service worker
                 const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
                 console.log('dag365: Firebase SW registrerad', registration);
 
-                // Ladda Firebase
                 const loaded = await loadFirebase();
                 if (!loaded) {
                     alert('Kunde inte ladda notis-tjänsten. Försök igen.');
                     return;
                 }
 
-                // Begär tillåtelse
                 const permission = await Notification.requestPermission();
                 console.log('dag365: Notis-tillåtelse:', permission);
 
@@ -3475,7 +3518,6 @@
                     return;
                 }
 
-                // Hämta FCM token
                 const { getToken } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js');
                 const token = await getToken(messaging, {
                     vapidKey: VAPID_KEY,
@@ -3486,12 +3528,11 @@
                     console.log('dag365: FCM Token:', token);
                     localStorage.setItem('dag365_fcm_token', token);
 
-                    // Här skulle vi skicka token till en backend
-                    // För nu sparar vi bara lokalt
-                    console.log('dag365: Token sparad! Kopiera denna för att skicka testnotis:');
-                    console.log(token);
+                    // Spara till Firestore med valda tävlingar
+                    const events = getNotifyEvents();
+                    await saveSubscriptionToFirestore(token, events);
 
-                    alert('🎉 Notiser aktiverade!\n\nDu kommer få påminnelser innan svenska OS-tävlingar börjar.');
+                    alert('🎉 Notiser aktiverade!\n\nVälj tävlingar du vill bli påmind om genom att klicka på 🔕 vid varje tävling.');
                 } else {
                     console.error('dag365: Ingen token mottagen');
                     alert('Kunde inte aktivera notiser. Försök igen.');
@@ -3510,10 +3551,24 @@
             const token = localStorage.getItem('dag365_fcm_token');
 
             if (Notification.permission === 'granted' && token) {
-                // Redan aktiverat - visa info
-                if (confirm('Notiser är redan aktiverade! ✅\n\nVill du visa din enhets-token? (för debugging)')) {
-                    console.log('FCM Token:', token);
-                    alert('Token loggad till konsolen (F12)');
+                if (confirm('Notiser är aktiverade! ✅\n\nVälj tävlingar i schemat nedan.\n\nVill du skicka en testnotis?')) {
+                    // Skicka testnotis via Cloud Function
+                    try {
+                        const response = await fetch('https://europe-west1-dag365-2065b.cloudfunctions.net/testNotification', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token })
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            console.log('Testnotis skickad!');
+                        } else {
+                            alert('Fel: ' + result.error);
+                        }
+                    } catch (e) {
+                        console.log('Testnotis ej tillgänglig än (functions ej deployade)');
+                        alert('Testnotis kommer fungera efter deploy av Cloud Functions.');
+                    }
                 }
             } else {
                 await requestNotificationPermission();
