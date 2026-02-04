@@ -1,36 +1,58 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1170 2532">
-  <!-- iPhone splash screen -->
-  <rect width="1170" height="2532" fill="#0f0f14"/>
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a22"/>
+      <stop offset="100%" style="stop-color:#0f0f14"/>
+    </linearGradient>
+    <linearGradient id="sunGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcd34d"/>
+      <stop offset="100%" style="stop-color:#f59e0b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1170" height="2532" fill="url(#bgGradient)"/>
 
   <!-- Logo centered -->
-  <g transform="translate(585, 1100)">
-    <!-- Sun -->
-    <circle cx="180" cy="-200" r="60" fill="#fcd34d"/>
+  <g transform="translate(585, 1150)">
+    <!-- Sun icon -->
+    <circle cx="220" cy="-280" r="80" fill="url(#sunGradient)"/>
     <g fill="#fcd34d">
-      <rect x="174" y="-280" width="12" height="36" rx="6"/>
-      <rect x="174" y="-156" width="12" height="36" rx="6"/>
-      <rect x="80" y="-206" width="36" height="12" rx="6"/>
-      <rect x="244" y="-206" width="36" height="12" rx="6"/>
+      <rect x="212" y="-390" width="16" height="50" rx="8"/>
+      <rect x="212" y="-220" width="16" height="50" rx="8"/>
+      <rect x="90" y="-288" width="50" height="16" rx="8"/>
+      <rect x="300" y="-288" width="50" height="16" rx="8"/>
+      <rect x="118" y="-360" width="16" height="40" rx="8" transform="rotate(45 126 -340)"/>
+      <rect x="298" y="-230" width="16" height="40" rx="8" transform="rotate(45 306 -210)"/>
+      <rect x="118" y="-230" width="16" height="40" rx="8" transform="rotate(-45 126 -210)"/>
+      <rect x="298" y="-360" width="16" height="40" rx="8" transform="rotate(-45 306 -340)"/>
     </g>
 
     <!-- 365 text -->
     <text x="0" y="0"
-          font-family="system-ui, -apple-system, sans-serif"
-          font-size="280"
+          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+          font-size="320"
           font-weight="800"
           fill="#ffffff"
           text-anchor="middle">365</text>
 
     <!-- Underline -->
-    <rect x="-200" y="60" width="400" height="12" rx="6" fill="#fcd34d" opacity="0.8"/>
+    <rect x="-240" y="70" width="480" height="14" rx="7" fill="url(#sunGradient)" opacity="0.9"/>
 
     <!-- DAG text -->
-    <text x="0" y="140"
-          font-family="system-ui, -apple-system, sans-serif"
-          font-size="72"
+    <text x="0" y="180"
+          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+          font-size="80"
           font-weight="600"
           fill="#6b6b7a"
           text-anchor="middle"
-          letter-spacing="12">DAG</text>
+          letter-spacing="16">DAG</text>
+
+    <!-- Tagline -->
+    <text x="0" y="320"
+          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+          font-size="36"
+          fill="#4a4a5a"
+          text-anchor="middle">Vecka • Datum • Namnsdag</text>
   </g>
 </svg>

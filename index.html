@@ -11,7 +11,11 @@
     <meta property="og:description" content="Din dagliga översikt med veckonummer, namnsdag, soltider och OS 2026-schema. Få notiser när Sverige tävlar!">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://dag365.se">
-    <meta property="og:image" content="https://dag365.se/icon-512.png">
+    <meta property="og:image" content="https://dag365.se/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://dag365.se/og-image.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
@@ -703,10 +707,61 @@
             font-size: 0.7rem;
             border-radius: 4px;
             color: var(--text);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
-        
+
+        .day-cell:active:not(.empty) {
+            transform: scale(0.9);
+        }
+
         .day-cell.empty {
             visibility: hidden;
+            cursor: default;
+        }
+
+        /* Day info popup */
+        .day-info-popup {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        .day-info-popup.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .day-info-popup .date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .day-info-popup .info {
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+
+        .day-info-popup .holiday-text {
+            color: var(--red);
+            font-weight: 500;
+        }
+
+        .day-info-popup .themeday-text {
+            color: var(--orange);
         }
         
         .day-cell.today {
@@ -3595,6 +3650,70 @@
 
         // Initiera notis-knapp
         updateNotifyButton();
+
+        // Day info popup för mobil
+        const dayInfoPopup = document.createElement('div');
+        dayInfoPopup.className = 'day-info-popup';
+        dayInfoPopup.innerHTML = '<div class="date"></div><div class="info"></div>';
+        document.body.appendChild(dayInfoPopup);
+
+        let popupTimeout;
+
+        function showDayInfo(dayCell, date, month, year) {
+            const holiday = getHoliday(year, month, date);
+            const themeDay = getThemeDay(year, month, date);
+
+            if (!holiday && !themeDay) return;
+
+            const dateObj = new Date(year, month, date);
+            const dayNames = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
+            const monthNames = ['januari', 'februari', 'mars', 'april', 'maj', 'juni',
+                               'juli', 'augusti', 'september', 'oktober', 'november', 'december'];
+
+            const dateStr = `${dayNames[dateObj.getDay()]} ${date} ${monthNames[month]} ${year}`;
+
+            let infoHtml = '';
+            if (holiday) {
+                infoHtml += `<span class="holiday-text">🔴 ${holiday}</span>`;
+            }
+            if (themeDay) {
+                if (infoHtml) infoHtml += '<br>';
+                infoHtml += `<span class="themeday-text">${themeDay.icon} ${themeDay.name}</span>`;
+            }
+
+            dayInfoPopup.querySelector('.date').textContent = dateStr;
+            dayInfoPopup.querySelector('.info').innerHTML = infoHtml;
+            dayInfoPopup.classList.add('show');
+
+            clearTimeout(popupTimeout);
+            popupTimeout = setTimeout(() => {
+                dayInfoPopup.classList.remove('show');
+            }, 3000);
+        }
+
+        // Lägg till klick-handler på kalendern
+        document.getElementById('year-calendar').addEventListener('click', (e) => {
+            const dayCell = e.target.closest('.day-cell');
+            if (!dayCell || dayCell.classList.contains('empty')) return;
+
+            const weekRow = dayCell.parentElement;
+            const weeksContainer = weekRow.parentElement;
+            const monthCard = weeksContainer.parentElement;
+            const monthCards = Array.from(document.querySelectorAll('.month-card'));
+            const monthIndex = monthCards.indexOf(monthCard);
+
+            const dayNum = parseInt(dayCell.textContent);
+            if (!isNaN(dayNum)) {
+                showDayInfo(dayCell, dayNum, monthIndex, displayYear);
+            }
+        });
+
+        // Stäng popup vid klick utanför
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.day-cell') && !e.target.closest('.day-info-popup')) {
+                dayInfoPopup.classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>
