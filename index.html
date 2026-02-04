@@ -179,11 +179,34 @@
             display: flex;
             background: var(--orange);
             border-color: var(--orange);
+            transition: all 0.3s ease;
         }
 
         #notify-btn:hover {
             background: #e8903d;
             border-color: #e8903d;
+        }
+
+        #notify-btn.notify-active {
+            background: var(--green);
+            border-color: var(--green);
+            animation: pulse-green 2s infinite;
+        }
+
+        #notify-btn.notify-active:hover {
+            background: #20c374;
+            border-color: #20c374;
+        }
+
+        #notify-btn.notify-denied {
+            background: var(--muted);
+            border-color: var(--muted);
+            opacity: 0.6;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(38, 222, 129, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(38, 222, 129, 0); }
         }
 
         /* Dashboard Grid */
@@ -1280,7 +1303,7 @@
         <header class="site-header">
             <div class="logo">dag<span>365</span></div>
             <div class="header-right">
-                <button id="notify-btn" class="install-btn" title="Aktivera OS-notiser">🔔 Notiser</button>
+                <button id="notify-btn" class="install-btn" title="Klicka för att aktivera OS-notiser">🔔 Aktivera notiser</button>
                 <button id="install-btn" class="install-btn" title="Installera app">📲 Installera</button>
                 <button id="theme-toggle" class="theme-toggle" title="Byt tema">🌙</button>
                 <div class="header-time" id="clock">--:--:--</div>
@@ -3556,25 +3579,30 @@
                 return;
             }
 
+            // Ta bort gamla klasser
+            notifyBtn.classList.remove('notify-active', 'notify-denied');
+            notifyBtn.style.opacity = '1';
+
             if (Notification.permission === 'granted' && token) {
-                notifyBtn.textContent = '🔔 Notiser på';
-                notifyBtn.classList.add('show');
-                notifyBtn.style.opacity = '0.7';
+                notifyBtn.innerHTML = '🔔 <span style="color: #90EE90;">●</span> Notiser PÅ';
+                notifyBtn.classList.add('show', 'notify-active');
+                notifyBtn.title = 'Notiser är aktiverade! Klicka för att skicka testnotis.';
             } else if (Notification.permission === 'denied') {
-                notifyBtn.textContent = '🔕 Blockerade';
-                notifyBtn.classList.add('show');
-                notifyBtn.style.opacity = '0.5';
+                notifyBtn.innerHTML = '🔕 Blockerade';
+                notifyBtn.classList.add('show', 'notify-denied');
+                notifyBtn.title = 'Notiser är blockerade i webbläsaren. Ändra i inställningar.';
             } else {
-                notifyBtn.textContent = '🔔 Notiser';
+                notifyBtn.innerHTML = '🔔 Aktivera notiser';
                 notifyBtn.classList.add('show');
+                notifyBtn.title = 'Klicka för att aktivera OS-notiser';
             }
         }
 
         // Begär tillåtelse och registrera token
         async function requestNotificationPermission() {
             try {
-                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-                console.log('dag365: Firebase SW registrerad', registration);
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('dag365: Service Worker registrerad', registration);
 
                 const loaded = await loadFirebase();
                 if (!loaded) {
