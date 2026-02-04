@@ -3601,8 +3601,8 @@
         // Begär tillåtelse och registrera token
         async function requestNotificationPermission() {
             try {
-                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-                console.log('dag365: Firebase SW registrerad', registration);
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('dag365: Service Worker registrerad', registration);
 
                 const loaded = await loadFirebase();
                 if (!loaded) {
