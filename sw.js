@@ -31,17 +31,21 @@ self.addEventListener('push', function(event) {
     try {
         payload = event.data ? event.data.json() : {};
     } catch (e) {
-        payload = { notification: { title: '🇸🇪 Sverige tävlar!', body: event.data?.text() || '' } };
+        payload = {};
     }
 
-    const notificationTitle = payload.notification?.title || '🇸🇪 Sverige tävlar snart!';
+    // Läs från data-fältet (data-only meddelanden) med fallback till notification (legacy)
+    const data = payload.data || {};
+    const notification = payload.notification || {};
+
+    const notificationTitle = data.title || notification.title || '🇸🇪 Sverige tävlar snart!';
     const notificationOptions = {
-        body: payload.notification?.body || 'En svensk tävling börjar snart',
+        body: data.body || notification.body || 'En svensk tävling börjar snart',
         icon: '/icon-192.png',
         badge: '/icon-192.png',
         tag: 'os-notification',
         vibrate: [200, 100, 200],
-        data: payload.data || {},
+        data: data,
         // OBS: actions stöds inte på iOS Safari, men skadar inte att ha med
         actions: [
             { action: 'open', title: 'Öppna dag365' },
