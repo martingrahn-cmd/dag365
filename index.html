@@ -3653,10 +3653,12 @@
             }
         };
 
-        // Visa lokal notis
+        // Visa lokal notis (stödjer både data-only och notification-meddelanden)
         function showLocalNotification(payload) {
-            const title = payload.notification?.title || '🇸🇪 Sverige tävlar!';
-            const body = payload.notification?.body || '';
+            const data = payload.data || {};
+            const notification = payload.notification || {};
+            const title = data.title || notification.title || '🇸🇪 Sverige tävlar!';
+            const body = data.body || notification.body || '';
 
             if (Notification.permission === 'granted') {
                 new Notification(title, {

@@ -205,15 +205,16 @@ exports.sendScheduledNotifications = functions
                 if (selectedEvents.includes(eventId)) {
                     notifications.push({
                         token,
-                        notification: {
-                            title: `${icon} Sverige tävlar om 30 min!`,
-                            body: `${event.type}: ${event.event} kl ${event.time}`
-                        },
                         data: {
+                            title: `${icon} Sverige tävlar om 30 min!`,
+                            body: `${event.type}: ${event.event} kl ${event.time}`,
                             eventId,
                             url: 'https://dag365.se'
                         },
                         webpush: {
+                            headers: {
+                                Urgency: 'high'
+                            },
                             fcmOptions: {
                                 link: 'https://dag365.se'
                             }
@@ -290,11 +291,14 @@ exports.testNotification = functions
         try {
             await messaging.send({
                 token,
-                notification: {
+                data: {
                     title: '🇸🇪 Testnotis från dag365!',
                     body: 'Push-notiser fungerar! Du kommer få påminnelser innan svenska OS-tävlingar.'
                 },
                 webpush: {
+                    headers: {
+                        Urgency: 'high'
+                    },
                     fcmOptions: {
                         link: 'https://dag365.se'
                     }
