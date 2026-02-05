@@ -3477,6 +3477,21 @@
         let messaging = null;
         let firestoreDb = null;
 
+        // iOS-detektion och standalone-kontroll
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+
+        function isStandalone() {
+            return window.navigator.standalone === true ||
+                   window.matchMedia('(display-mode: standalone)').matches;
+        }
+
+        function isIOSInSafari() {
+            return isIOS() && !isStandalone();
+        }
+
         // Ladda Firebase dynamiskt
         async function loadFirebase() {
             if (firebaseApp) return true;
@@ -3574,6 +3589,15 @@
         function updateNotifyButton() {
             const token = localStorage.getItem('dag365_fcm_token');
 
+            // iOS i Safari (inte installerad som app) - visa installationsinstruktioner
+            if (isIOSInSafari()) {
+                notifyBtn.innerHTML = '📲 Installera för notiser';
+                notifyBtn.classList.add('show');
+                notifyBtn.classList.remove('notify-active', 'notify-denied');
+                notifyBtn.title = 'Installera appen för att få push-notiser på iOS';
+                return;
+            }
+
             if (!('Notification' in window)) {
                 notifyBtn.style.display = 'none';
                 return;
@@ -3649,6 +3673,21 @@
 
         // Notis-knapp klick
         notifyBtn.addEventListener('click', async () => {
+            // iOS i Safari - visa installationsinstruktioner
+            if (isIOSInSafari()) {
+                alert(
+                    '📲 Installera dag365 på din hemskärm\n\n' +
+                    'Push-notiser på iOS kräver att appen är installerad:\n\n' +
+                    '1. Tryck på dela-knappen (▢↑) längst ner\n' +
+                    '2. Scrolla ner och välj "Lägg till på hemskärmen"\n' +
+                    '3. Tryck "Lägg till"\n' +
+                    '4. Öppna appen från hemskärmen\n' +
+                    '5. Aktivera notiser!\n\n' +
+                    'OBS: Kräver iOS 16.4 eller senare.'
+                );
+                return;
+            }
+
             const token = localStorage.getItem('dag365_fcm_token');
 
             if (Notification.permission === 'granted' && token) {
