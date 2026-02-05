@@ -2,6 +2,7 @@
 // Kombinerar offline-stöd med push-notiser
 
 // ===== FIREBASE MESSAGING =====
+// Ladda Firebase för token-hantering (behövs för getToken i frontend)
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
@@ -14,11 +15,24 @@ firebase.initializeApp({
     appId: "1:213756811848:web:e7098e7880ad4fa96d167d"
 });
 
+// Initiera Firebase messaging (behövs för token-registrering)
 const messaging = firebase.messaging();
 
-// Hantera bakgrundsnotiser
-messaging.onBackgroundMessage((payload) => {
-    console.log('dag365: Bakgrundsnotis mottagen', payload);
+// ===== PUSH EVENT HANDLER (iOS-kompatibel) =====
+// VIKTIGT: Använd direkt 'push' event istället för Firebase's onBackgroundMessage
+// iOS Safari kräver att notiser visas OMEDELBART med event.waitUntil()
+// Annars återkallar Safari push-tillståndet!
+// Se: https://github.com/firebase/firebase-js-sdk/issues/8010
+
+self.addEventListener('push', function(event) {
+    console.log('dag365: Push event mottagen', event);
+
+    let payload;
+    try {
+        payload = event.data ? event.data.json() : {};
+    } catch (e) {
+        payload = { notification: { title: '🇸🇪 Sverige tävlar!', body: event.data?.text() || '' } };
+    }
 
     const notificationTitle = payload.notification?.title || '🇸🇪 Sverige tävlar snart!';
     const notificationOptions = {
@@ -27,14 +41,18 @@ messaging.onBackgroundMessage((payload) => {
         badge: '/icon-192.png',
         tag: 'os-notification',
         vibrate: [200, 100, 200],
-        data: payload.data,
+        data: payload.data || {},
+        // OBS: actions stöds inte på iOS Safari, men skadar inte att ha med
         actions: [
             { action: 'open', title: 'Öppna dag365' },
             { action: 'dismiss', title: 'Stäng' }
         ]
     };
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    // KRITISKT: Använd event.waitUntil() - detta är vad som krävs för iOS!
+    event.waitUntil(
+        self.registration.showNotification(notificationTitle, notificationOptions)
+    );
 });
 
 // Hantera klick på notis
@@ -60,7 +78,7 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 // ===== CACHING FÖR OFFLINE =====
-const CACHE_NAME = 'dag365-v2';
+const CACHE_NAME = 'dag365-v3';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
