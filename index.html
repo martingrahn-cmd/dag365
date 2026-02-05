@@ -3556,10 +3556,19 @@
         }
 
         // Uppdatera toggleEventNotify för att synka till Firestore
-        const originalToggleEventNotify = toggleEventNotify;
         toggleEventNotify = async function(eventId) {
+            const token = localStorage.getItem('dag365_fcm_token');
+
+            // Om notiser inte är aktiverade, visa meddelande
+            if (!token || Notification.permission !== 'granted') {
+                alert('Du behöver aktivera notiser först!\n\nKlicka på "🔔 Aktivera notiser" längst upp.');
+                return;
+            }
+
             let notifyEvents = getNotifyEvents();
-            if (notifyEvents.includes(eventId)) {
+            const wasOn = notifyEvents.includes(eventId);
+
+            if (wasOn) {
                 notifyEvents = notifyEvents.filter(e => e !== eventId);
             } else {
                 notifyEvents.push(eventId);
@@ -3568,7 +3577,12 @@
             renderOlympics();
 
             // Synka till Firestore
-            await syncNotifyEventsToFirestore();
+            try {
+                await syncNotifyEventsToFirestore();
+                console.log('dag365: Event-notis togglad:', eventId, wasOn ? 'AV' : 'PÅ');
+            } catch (error) {
+                console.error('dag365: Kunde inte synka till Firestore:', error);
+            }
         };
 
         // Visa lokal notis
@@ -3671,6 +3685,29 @@
             }
         }
 
+        // Stäng av notiser
+        async function disableNotifications() {
+            const token = localStorage.getItem('dag365_fcm_token');
+
+            // Ta bort från Firestore
+            if (token && firestoreDb) {
+                try {
+                    const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+                    await deleteDoc(doc(firestoreDb, 'subscribers', token));
+                    console.log('dag365: Prenumeration borttagen från Firestore');
+                } catch (error) {
+                    console.error('dag365: Kunde inte ta bort från Firestore', error);
+                }
+            }
+
+            // Ta bort lokalt
+            localStorage.removeItem('dag365_fcm_token');
+            localStorage.removeItem('dag365_notify_events');
+
+            updateNotifyButton();
+            renderOlympics();
+        }
+
         // Notis-knapp klick
         notifyBtn.addEventListener('click', async () => {
             // iOS i Safari - visa installationsinstruktioner
@@ -3691,7 +3728,16 @@
             const token = localStorage.getItem('dag365_fcm_token');
 
             if (Notification.permission === 'granted' && token) {
-                if (confirm('Notiser är aktiverade! ✅\n\nVälj tävlingar i schemat nedan.\n\nVill du skicka en testnotis?')) {
+                // Visa meny med alternativ
+                const choice = prompt(
+                    'Notiser är aktiverade! ✅\n\n' +
+                    'Välj alternativ:\n' +
+                    '1 = Skicka testnotis\n' +
+                    '2 = Stäng av notiser\n\n' +
+                    'Skriv 1 eller 2:'
+                );
+
+                if (choice === '1') {
                     // Skicka testnotis via Cloud Function
                     try {
                         const response = await fetch('https://europe-west1-dag365-2065b.cloudfunctions.net/testNotification', {
@@ -3708,6 +3754,11 @@
                     } catch (e) {
                         console.log('Testnotis ej tillgänglig än (functions ej deployade)');
                         alert('Testnotis kommer fungera efter deploy av Cloud Functions.');
+                    }
+                } else if (choice === '2') {
+                    if (confirm('Är du säker på att du vill stänga av notiser?')) {
+                        await disableNotifications();
+                        alert('Notiser avstängda.');
                     }
                 }
             } else {
