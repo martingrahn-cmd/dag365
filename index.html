@@ -1438,6 +1438,8 @@
                     <button class="olympics-filter" data-sport="freestyle">🎿</button>
                     <button class="olympics-filter" data-sport="snowboard">🏂</button>
                     <button class="olympics-filter" data-sport="jumping">🦅</button>
+                    <button class="olympics-filter" data-sport="figureskating">⛸️</button>
+                    <button class="olympics-filter" data-sport="luge">🛷</button>
                     <select id="olympics-date-filter" class="olympics-date-select">
                         <option value="all">Alla dagar</option>
                     </select>
@@ -3264,11 +3266,13 @@
             { date: '2026-02-14', time: '12:10', sport: 'hockey', event: 'Sverige – Slovakien', type: 'Herrar gruppspel' },
             { date: '2026-02-16', time: '12:10', sport: 'hockey', event: 'Sverige – Italien', type: 'Herrar gruppspel' },
 
-            // Alpint - Storslalom & Slalom (15-18 feb)
+            // Alpint - Storslalom & Slalom (14-18 feb)
+            { date: '2026-02-14', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint herrar (Jakobsen)' },
+            { date: '2026-02-14', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint herrar' },
             { date: '2026-02-15', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint damer (Hector)' },
             { date: '2026-02-15', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint damer (Hector)' },
-            { date: '2026-02-16', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint herrar' },
-            { date: '2026-02-16', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint herrar' },
+            { date: '2026-02-16', time: '10:00', sport: 'alpine', event: 'Slalom åk 1', type: 'Alpint herrar (Jakobsen)' },
+            { date: '2026-02-16', time: '13:30', sport: 'alpine', event: 'Slalom åk 2', type: 'Alpint herrar' },
             { date: '2026-02-18', time: '10:00', sport: 'alpine', event: 'Slalom åk 1', type: 'Alpint damer (Swenn Larsson)' },
             { date: '2026-02-18', time: '13:30', sport: 'alpine', event: 'Slalom åk 2', type: 'Alpint damer' },
 
@@ -3286,6 +3290,22 @@
             { date: '2026-02-20', time: '13:00', sport: 'freestyle', event: 'Skicross final', type: 'Freestyle herrar' },
             { date: '2026-02-21', time: '10:00', sport: 'freestyle', event: 'Skicross kval', type: 'Freestyle damer (Näslund)' },
             { date: '2026-02-21', time: '12:00', sport: 'freestyle', event: 'Skicross final', type: 'Freestyle damer (Näslund)' },
+
+            // Rodel (7-10 feb) - Svante & Tove Kohala
+            { date: '2026-02-07', time: '17:00', sport: 'luge', event: 'Singel åk 1-2', type: 'Rodel herrar (S. Kohala)' },
+            { date: '2026-02-08', time: '17:00', sport: 'luge', event: 'Singel åk 3-4 final', type: 'Rodel herrar (S. Kohala)' },
+            { date: '2026-02-09', time: '17:00', sport: 'luge', event: 'Singel åk 1-2', type: 'Rodel damer (T. Kohala)' },
+            { date: '2026-02-10', time: '17:00', sport: 'luge', event: 'Singel åk 3-4 final', type: 'Rodel damer (T. Kohala)' },
+
+            // Konståkning (9-13 feb) - Nordebäck, Majorov/Reitan
+            { date: '2026-02-09', time: '19:20', sport: 'figureskating', event: 'Isdans rytmdans', type: 'Konståkning (Majorov/Reitan)' },
+            { date: '2026-02-10', time: '18:30', sport: 'figureskating', event: 'Singel kortprogram', type: 'Konståkning herrar (Nordebäck)' },
+            { date: '2026-02-11', time: '19:30', sport: 'figureskating', event: 'Isdans fritt program', type: 'Konståkning (Majorov/Reitan)' },
+            { date: '2026-02-13', time: '19:00', sport: 'figureskating', event: 'Singel fritt program', type: 'Konståkning herrar (Nordebäck)' },
+
+            // Parallell puckelpist / Dual Moguls (14-15 feb)
+            { date: '2026-02-14', time: '10:30', sport: 'freestyle', event: 'Parallell puckelpist final', type: 'Freestyle damer' },
+            { date: '2026-02-15', time: '10:30', sport: 'freestyle', event: 'Parallell puckelpist final', type: 'Freestyle herrar (Wallberg)' },
 
             // Finaler
             { date: '2026-02-19', time: '19:10', sport: 'hockey', event: 'OS-final', type: 'Hockey damer' },
@@ -3411,7 +3431,9 @@
                 freestyle: '🎿',
                 snowboard: '🏂',
                 jumping: '🦅',
-                biathlon: '🎯'
+                biathlon: '🎯',
+                figureskating: '⛸️',
+                luge: '🛷'
             };
 
             const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
