@@ -1154,6 +1154,24 @@
             gap: 0.3rem;
         }
 
+        .olympics-date-select {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.3rem 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .olympics-date-select:hover,
+        .olympics-date-select:focus {
+            border-color: #ffd700;
+            outline: none;
+        }
+
         .olympics-actions {
             margin-top: 1rem;
             text-align: center;
@@ -1420,6 +1438,9 @@
                     <button class="olympics-filter" data-sport="freestyle">🎿</button>
                     <button class="olympics-filter" data-sport="snowboard">🏂</button>
                     <button class="olympics-filter" data-sport="jumping">🦅</button>
+                    <select id="olympics-date-filter" class="olympics-date-select">
+                        <option value="all">Alla dagar</option>
+                    </select>
                 </div>
             </div>
             <div class="olympics-grid" id="olympics-grid">
@@ -3274,6 +3295,7 @@
         ];
 
         let currentOlympicsFilter = 'all';
+        let currentOlympicsDateFilter = 'all';
         let olympicsShowAll = false;
 
         // Ladda sparade notis-val från localStorage
@@ -3308,9 +3330,27 @@
             const now = new Date();
             const notifyEvents = getNotifyEvents();
 
+            // Populera dag-dropdown med unika datum
+            const dateSelect = document.getElementById('olympics-date-filter');
+            const uniqueDates = [...new Set(olympicsEvents.map(e => e.date))].sort();
+            const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
+
+            if (dateSelect.options.length <= 1) {
+                uniqueDates.forEach(date => {
+                    const d = new Date(date + 'T12:00:00');
+                    const label = `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1}`;
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = label;
+                    dateSelect.appendChild(option);
+                });
+            }
+            dateSelect.value = currentOlympicsDateFilter;
+
             // Filtrera och sortera events
             let events = olympicsEvents
                 .filter(e => currentOlympicsFilter === 'all' || e.sport === currentOlympicsFilter)
+                .filter(e => currentOlympicsDateFilter === 'all' || e.date === currentOlympicsDateFilter)
                 .map(e => {
                     const eventDate = new Date(`${e.date}T${e.time}:00`);
                     const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
@@ -3408,6 +3448,12 @@
                 currentOlympicsFilter = btn.dataset.sport;
                 renderOlympics();
             });
+        });
+
+        // Olympics date filter handler
+        document.getElementById('olympics-date-filter').addEventListener('change', (e) => {
+            currentOlympicsDateFilter = e.target.value;
+            renderOlympics();
         });
 
         // Visa alla/färre toggle
