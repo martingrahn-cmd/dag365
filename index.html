@@ -1154,6 +1154,24 @@
             gap: 0.3rem;
         }
 
+        .olympics-date-select {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.3rem 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .olympics-date-select:hover,
+        .olympics-date-select:focus {
+            border-color: #ffd700;
+            outline: none;
+        }
+
         .olympics-actions {
             margin-top: 1rem;
             text-align: center;
@@ -1420,6 +1438,11 @@
                     <button class="olympics-filter" data-sport="freestyle">🎿</button>
                     <button class="olympics-filter" data-sport="snowboard">🏂</button>
                     <button class="olympics-filter" data-sport="jumping">🦅</button>
+                    <button class="olympics-filter" data-sport="figureskating">⛸️</button>
+                    <button class="olympics-filter" data-sport="luge">🛷</button>
+                    <select id="olympics-date-filter" class="olympics-date-select">
+                        <option value="all">Alla dagar</option>
+                    </select>
                 </div>
             </div>
             <div class="olympics-grid" id="olympics-grid">
@@ -3243,11 +3266,13 @@
             { date: '2026-02-14', time: '12:10', sport: 'hockey', event: 'Sverige – Slovakien', type: 'Herrar gruppspel' },
             { date: '2026-02-16', time: '12:10', sport: 'hockey', event: 'Sverige – Italien', type: 'Herrar gruppspel' },
 
-            // Alpint - Storslalom & Slalom (15-18 feb)
+            // Alpint - Storslalom & Slalom (14-18 feb)
+            { date: '2026-02-14', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint herrar (Jakobsen)' },
+            { date: '2026-02-14', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint herrar' },
             { date: '2026-02-15', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint damer (Hector)' },
             { date: '2026-02-15', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint damer (Hector)' },
-            { date: '2026-02-16', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint herrar' },
-            { date: '2026-02-16', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint herrar' },
+            { date: '2026-02-16', time: '10:00', sport: 'alpine', event: 'Slalom åk 1', type: 'Alpint herrar (Jakobsen)' },
+            { date: '2026-02-16', time: '13:30', sport: 'alpine', event: 'Slalom åk 2', type: 'Alpint herrar' },
             { date: '2026-02-18', time: '10:00', sport: 'alpine', event: 'Slalom åk 1', type: 'Alpint damer (Swenn Larsson)' },
             { date: '2026-02-18', time: '13:30', sport: 'alpine', event: 'Slalom åk 2', type: 'Alpint damer' },
 
@@ -3266,6 +3291,22 @@
             { date: '2026-02-21', time: '10:00', sport: 'freestyle', event: 'Skicross kval', type: 'Freestyle damer (Näslund)' },
             { date: '2026-02-21', time: '12:00', sport: 'freestyle', event: 'Skicross final', type: 'Freestyle damer (Näslund)' },
 
+            // Rodel (7-10 feb) - Svante & Tove Kohala
+            { date: '2026-02-07', time: '17:00', sport: 'luge', event: 'Singel åk 1-2', type: 'Rodel herrar (S. Kohala)' },
+            { date: '2026-02-08', time: '17:00', sport: 'luge', event: 'Singel åk 3-4 final', type: 'Rodel herrar (S. Kohala)' },
+            { date: '2026-02-09', time: '17:00', sport: 'luge', event: 'Singel åk 1-2', type: 'Rodel damer (T. Kohala)' },
+            { date: '2026-02-10', time: '17:00', sport: 'luge', event: 'Singel åk 3-4 final', type: 'Rodel damer (T. Kohala)' },
+
+            // Konståkning (9-13 feb) - Nordebäck, Majorov/Reitan
+            { date: '2026-02-09', time: '19:20', sport: 'figureskating', event: 'Isdans rytmdans', type: 'Konståkning (Majorov/Reitan)' },
+            { date: '2026-02-10', time: '18:30', sport: 'figureskating', event: 'Singel kortprogram', type: 'Konståkning herrar (Nordebäck)' },
+            { date: '2026-02-11', time: '19:30', sport: 'figureskating', event: 'Isdans fritt program', type: 'Konståkning (Majorov/Reitan)' },
+            { date: '2026-02-13', time: '19:00', sport: 'figureskating', event: 'Singel fritt program', type: 'Konståkning herrar (Nordebäck)' },
+
+            // Parallell puckelpist / Dual Moguls (14-15 feb)
+            { date: '2026-02-14', time: '10:30', sport: 'freestyle', event: 'Parallell puckelpist final', type: 'Freestyle damer' },
+            { date: '2026-02-15', time: '10:30', sport: 'freestyle', event: 'Parallell puckelpist final', type: 'Freestyle herrar (Wallberg)' },
+
             // Finaler
             { date: '2026-02-19', time: '19:10', sport: 'hockey', event: 'OS-final', type: 'Hockey damer' },
             { date: '2026-02-20', time: '14:05', sport: 'curling', event: 'OS-final', type: 'Curling damer' },
@@ -3274,6 +3315,7 @@
         ];
 
         let currentOlympicsFilter = 'all';
+        let currentOlympicsDateFilter = 'all';
         let olympicsShowAll = false;
 
         // Ladda sparade notis-val från localStorage
@@ -3308,9 +3350,27 @@
             const now = new Date();
             const notifyEvents = getNotifyEvents();
 
+            // Populera dag-dropdown med unika datum
+            const dateSelect = document.getElementById('olympics-date-filter');
+            const uniqueDates = [...new Set(olympicsEvents.map(e => e.date))].sort();
+            const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
+
+            if (dateSelect.options.length <= 1) {
+                uniqueDates.forEach(date => {
+                    const d = new Date(date + 'T12:00:00');
+                    const label = `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1}`;
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = label;
+                    dateSelect.appendChild(option);
+                });
+            }
+            dateSelect.value = currentOlympicsDateFilter;
+
             // Filtrera och sortera events
             let events = olympicsEvents
                 .filter(e => currentOlympicsFilter === 'all' || e.sport === currentOlympicsFilter)
+                .filter(e => currentOlympicsDateFilter === 'all' || e.date === currentOlympicsDateFilter)
                 .map(e => {
                     const eventDate = new Date(`${e.date}T${e.time}:00`);
                     const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
@@ -3371,7 +3431,9 @@
                 freestyle: '🎿',
                 snowboard: '🏂',
                 jumping: '🦅',
-                biathlon: '🎯'
+                biathlon: '🎯',
+                figureskating: '⛸️',
+                luge: '🛷'
             };
 
             const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
@@ -3408,6 +3470,12 @@
                 currentOlympicsFilter = btn.dataset.sport;
                 renderOlympics();
             });
+        });
+
+        // Olympics date filter handler
+        document.getElementById('olympics-date-filter').addEventListener('change', (e) => {
+            currentOlympicsDateFilter = e.target.value;
+            renderOlympics();
         });
 
         // Visa alla/färre toggle
