@@ -14,8 +14,10 @@
     <meta property="og:image" content="https://dag365.se/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="sv_SE">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://dag365.se/og-image.png">
+    <link rel="canonical" href="https://dag365.se/">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
@@ -34,6 +36,27 @@
     <link rel="apple-touch-startup-image" href="splash.svg" media="(device-width: 375px) and (device-height: 667px)">
     <link rel="apple-touch-startup-image" href="splash.svg" media="(device-width: 414px) and (device-height: 736px)">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "dag365",
+        "url": "https://dag365.se",
+        "description": "Din dagliga översikt med veckonummer, datum, namnsdag, soltider, väderprognos och OS 2026-schema.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "sv",
+        "author": {
+            "@type": "Organization",
+            "name": "dag365"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "SEK"
+        }
+    }
+    </script>
     <style>
         :root {
             --bg: #0f0f14;
@@ -112,6 +135,7 @@
             font-weight: 700;
             font-size: 1.25rem;
             color: var(--text);
+            margin: 0;
         }
         
         .logo span {
@@ -1318,16 +1342,17 @@
 </head>
 <body>
     <div class="container">
-        <header class="site-header">
-            <div class="logo">dag<span>365</span></div>
-            <div class="header-right">
-                <button id="notify-btn" class="install-btn" title="Klicka för att aktivera OS-notiser">🔔 Aktivera notiser</button>
-                <button id="install-btn" class="install-btn" title="Installera app">📲 Installera</button>
-                <button id="theme-toggle" class="theme-toggle" title="Byt tema">🌙</button>
-                <div class="header-time" id="clock">--:--:--</div>
-            </div>
+        <header class="site-header" role="banner">
+            <h1 class="logo">dag<span>365</span></h1>
+            <nav class="header-right" aria-label="Huvudnavigering">
+                <button id="notify-btn" class="install-btn" title="Klicka för att aktivera OS-notiser" aria-label="Aktivera push-notiser för OS-tävlingar">🔔 Aktivera notiser</button>
+                <button id="install-btn" class="install-btn" title="Installera app" aria-label="Installera dag365 som app">📲 Installera</button>
+                <button id="theme-toggle" class="theme-toggle" title="Byt tema" aria-label="Växla mellan mörkt och ljust tema">🌙</button>
+                <div class="header-time" id="clock" aria-label="Klocka">--:--:--</div>
+            </nav>
         </header>
-        
+
+        <main>
         <div class="dashboard">
             <div class="widget week-widget">
                 <div class="widget-label"><span class="dot"></span>Vecka</div>
@@ -1425,25 +1450,25 @@
             </div>
         </div>
 
-        <div class="olympics-section">
+        <section class="olympics-section" aria-label="OS Milano-Cortina 2026">
             <div class="section-header">
                 <h2 class="section-title">🇸🇪 OS Milano-Cortina 2026</h2>
-                <div class="section-nav olympics-nav">
-                    <button class="olympics-filter active" data-sport="all">Alla</button>
-                    <button class="olympics-filter" data-sport="hockey">🏒</button>
-                    <button class="olympics-filter" data-sport="curling">🥌</button>
-                    <button class="olympics-filter" data-sport="skiing">⛷️</button>
-                    <button class="olympics-filter" data-sport="biathlon">🎯</button>
-                    <button class="olympics-filter" data-sport="alpine">🏔️</button>
-                    <button class="olympics-filter" data-sport="freestyle">🎿</button>
-                    <button class="olympics-filter" data-sport="snowboard">🏂</button>
-                    <button class="olympics-filter" data-sport="jumping">🦅</button>
-                    <button class="olympics-filter" data-sport="figureskating">⛸️</button>
-                    <button class="olympics-filter" data-sport="luge">🛷</button>
-                    <select id="olympics-date-filter" class="olympics-date-select">
+                <nav class="section-nav olympics-nav" aria-label="Filtrera OS-sporter">
+                    <button class="olympics-filter active" data-sport="all" aria-label="Visa alla sporter">Alla</button>
+                    <button class="olympics-filter" data-sport="hockey" aria-label="Filtrera ishockey">🏒</button>
+                    <button class="olympics-filter" data-sport="curling" aria-label="Filtrera curling">🥌</button>
+                    <button class="olympics-filter" data-sport="skiing" aria-label="Filtrera längdskidåkning">⛷️</button>
+                    <button class="olympics-filter" data-sport="biathlon" aria-label="Filtrera skidskytte">🎯</button>
+                    <button class="olympics-filter" data-sport="alpine" aria-label="Filtrera alpin skidåkning">🏔️</button>
+                    <button class="olympics-filter" data-sport="freestyle" aria-label="Filtrera freestyle">🎿</button>
+                    <button class="olympics-filter" data-sport="snowboard" aria-label="Filtrera snowboard">🏂</button>
+                    <button class="olympics-filter" data-sport="jumping" aria-label="Filtrera backhoppning">🦅</button>
+                    <button class="olympics-filter" data-sport="figureskating" aria-label="Filtrera konståkning">⛸️</button>
+                    <button class="olympics-filter" data-sport="luge" aria-label="Filtrera rodel">🛷</button>
+                    <select id="olympics-date-filter" class="olympics-date-select" aria-label="Filtrera efter datum">
                         <option value="all">Alla dagar</option>
                     </select>
-                </div>
+                </nav>
             </div>
             <div class="olympics-grid" id="olympics-grid">
                 <div class="olympics-card">
@@ -1452,10 +1477,11 @@
                 </div>
             </div>
             <div class="olympics-actions">
-                <button id="olympics-show-all" class="olympics-toggle">Visa hela schemat ▼</button>
+                <button id="olympics-show-all" class="olympics-toggle" aria-label="Visa eller dölj hela OS-schemat">Visa hela schemat ▼</button>
             </div>
-        </div>
+        </section>
 
+        <section aria-label="Årskalender">
         <div class="section-header">
             <h2 class="section-title">Årskalender <span id="calendar-year">2025</span></h2>
             <div class="section-nav">
@@ -1468,8 +1494,9 @@
         <div class="year-calendar" id="year-calendar">
             <!-- Generated by JS -->
         </div>
-        
-        <div class="history-section">
+        </section>
+
+        <section class="history-section" aria-label="Denna dag i historien">
             <div class="section-header">
                 <h2 class="section-title">Denna dag i historien</h2>
                 <div class="section-nav">
@@ -1484,9 +1511,9 @@
                     <div class="history-text">Laddar historiska händelser...</div>
                 </div>
             </div>
-        </div>
-        
-        <div class="quote-section">
+        </section>
+
+        <section class="quote-section" aria-label="Dagens citat">
             <div class="section-header">
                 <h2 class="section-title">💬 Dagens citat</h2>
             </div>
@@ -1494,23 +1521,23 @@
                 <div class="quote-text" id="quote-text">Laddar citat...</div>
                 <div class="quote-author" id="quote-author"></div>
                 <div class="quote-nav">
-                    <button id="prev-quote">← Föregående</button>
-                    <button id="next-quote">Nästa →</button>
-                    <button id="random-quote">🎲 Slumpa</button>
-                    <span class="quote-counter" id="quote-counter">1/50</span>
+                    <button id="prev-quote" aria-label="Föregående citat">← Föregående</button>
+                    <button id="next-quote" aria-label="Nästa citat">Nästa →</button>
+                    <button id="random-quote" aria-label="Slumpa citat">🎲 Slumpa</button>
+                    <span class="quote-counter" id="quote-counter" aria-label="Citaträknare">1/50</span>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="news-section">
+        <section class="news-section" aria-label="Nyheter">
             <div class="section-header">
                 <h2 class="section-title">Nyheter</h2>
-                <div class="section-nav">
+                <nav class="section-nav" aria-label="Filtrera nyhetskällor">
                     <button class="news-filter active" data-source="all">Alla</button>
                     <button class="news-filter" data-source="svt">SVT</button>
                     <button class="news-filter" data-source="sr">SR</button>
                     <button class="news-filter" data-source="feber">Feber</button>
-                </div>
+                </nav>
             </div>
             <div class="news-grid" id="news-grid">
                 <div class="news-card">
@@ -1519,10 +1546,12 @@
                     <div class="news-time">⏳</div>
                 </div>
             </div>
-        </div>
+        </section>
         
-        <footer>
-            dag365 — Snabb. Ren. Svensk.
+        </main>
+
+        <footer role="contentinfo">
+            <p>dag365 — Snabb. Ren. Svensk.</p>
         </footer>
     </div>
     
