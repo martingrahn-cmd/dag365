@@ -3583,8 +3583,8 @@
                 firestoreDb = getFirestore(firebaseApp);
 
                 onMessage(messaging, (payload) => {
+                    // Logga förgrunds-meddelanden (service worker visar notisen)
                     console.log('dag365: Förgrunds-notis mottagen', payload);
-                    showLocalNotification(payload);
                 });
 
                 return true;
