@@ -267,25 +267,16 @@ exports.sendScheduledNotifications = functions
     });
 
 /**
- * HTTP endpoint för att testa notiser (kan tas bort i produktion)
+ * Callable function för att testa notiser
+ * Använder onCall istället för onRequest — kräver ingen publik IAM-behörighet
  */
 exports.testNotification = functions
     .region('europe-west1')
-    .https.onRequest(async (req, res) => {
-        // CORS
-        res.set('Access-Control-Allow-Origin', '*');
-        if (req.method === 'OPTIONS') {
-            res.set('Access-Control-Allow-Methods', 'POST');
-            res.set('Access-Control-Allow-Headers', 'Content-Type');
-            res.status(204).send('');
-            return;
-        }
-
-        const { token } = req.body;
+    .https.onCall(async (data, context) => {
+        const token = data.token;
 
         if (!token) {
-            res.status(400).json({ error: 'Token saknas' });
-            return;
+            throw new functions.https.HttpsError('invalid-argument', 'Token saknas');
         }
 
         try {
@@ -304,9 +295,9 @@ exports.testNotification = functions
                     }
                 }
             });
-            res.json({ success: true, message: 'Notis skickad!' });
+            return { success: true, message: 'Notis skickad!' };
         } catch (error) {
             console.error('Fel vid testnotis:', error);
-            res.status(500).json({ error: error.message });
+            throw new functions.https.HttpsError('internal', error.message);
         }
     });
