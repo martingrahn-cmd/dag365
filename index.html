@@ -3808,18 +3808,16 @@
                 );
 
                 if (choice === '1') {
-                    // Skicka testnotis via Cloud Function (onCall)
+                    // Skicka testnotis via Firestore-trigger (kringgår IAM)
                     try {
                         await loadFirebase();
-                        const { getFunctions, httpsCallable } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-functions.js');
-                        const functionsInstance = getFunctions(firebaseApp, 'europe-west1');
-                        const testNotif = httpsCallable(functionsInstance, 'testNotification');
-                        const result = await testNotif({ token });
-                        if (result.data.success) {
-                            console.log('Testnotis skickad!');
-                        } else {
-                            alert('Fel: ' + (result.data.error || 'Okänt fel'));
-                        }
+                        const { collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+                        await addDoc(collection(firestoreDb, 'testNotifications'), {
+                            token: token,
+                            createdAt: new Date().toISOString()
+                        });
+                        console.log('Testnotis begärd!');
+                        alert('Testnotis skickas inom några sekunder!');
                     } catch (e) {
                         console.error('Testnotis fel:', e);
                         alert('Kunde inte skicka testnotis: ' + e.message);

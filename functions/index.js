@@ -267,16 +267,20 @@ exports.sendScheduledNotifications = functions
     });
 
 /**
- * Callable function för att testa notiser
- * Använder onCall istället för onRequest — kräver ingen publik IAM-behörighet
+ * Firestore-trigger för att skicka testnotiser
+ * Triggas när ett dokument skapas i testNotifications-samlingen
+ * Kringgår IAM-begränsningar eftersom det inte är en HTTP-funktion
  */
-exports.testNotification = functions
+exports.sendTestNotification = functions
     .region('europe-west1')
-    .https.onCall(async (data, context) => {
+    .firestore.document('testNotifications/{docId}')
+    .onCreate(async (snap, context) => {
+        const data = snap.data();
         const token = data.token;
 
         if (!token) {
-            throw new functions.https.HttpsError('invalid-argument', 'Token saknas');
+            console.error('testNotification: Token saknas');
+            return null;
         }
 
         try {
@@ -295,9 +299,17 @@ exports.testNotification = functions
                     }
                 }
             });
-            return { success: true, message: 'Notis skickad!' };
+            console.log('testNotification: Notis skickad till', token.substring(0, 10) + '...');
         } catch (error) {
-            console.error('Fel vid testnotis:', error);
-            throw new functions.https.HttpsError('internal', error.message);
+            console.error('testNotification: Fel vid skickning:', error);
         }
+
+        // Rensa upp testdokumentet
+        try {
+            await snap.ref.delete();
+        } catch (e) {
+            // Ignorera om det inte går att radera
+        }
+
+        return null;
     });
