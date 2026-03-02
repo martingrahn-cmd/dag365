@@ -38,12 +38,12 @@ self.addEventListener('push', function(event) {
     const data = payload.data || {};
     const notification = payload.notification || {};
 
-    const notificationTitle = data.title || notification.title || '🇸🇪 Sverige tävlar snart!';
+    const notificationTitle = data.title || notification.title || 'dag365';
     const notificationOptions = {
-        body: data.body || notification.body || 'En svensk tävling börjar snart',
+        body: data.body || notification.body || '',
         icon: '/icon-192.png',
         badge: '/icon-192.png',
-        tag: 'os-notification',
+        tag: 'dag365-notification',
         vibrate: [200, 100, 200],
         data: data,
         // OBS: actions stöds inte på iOS Safari, men skadar inte att ha med
