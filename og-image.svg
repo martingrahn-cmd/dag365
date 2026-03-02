@@ -62,8 +62,8 @@
 
     <!-- Box 4 -->
     <rect x="600" y="0" width="180" height="80" rx="12" fill="#1e3a5f" opacity="0.5"/>
-    <text x="690" y="35" text-anchor="middle" font-family="system-ui" font-size="28" fill="#fcd34d">🇸🇪</text>
-    <text x="690" y="62" text-anchor="middle" font-family="system-ui" font-size="16" fill="#94a3b8">OS 2026</text>
+    <text x="690" y="35" text-anchor="middle" font-family="system-ui" font-size="28" fill="#fcd34d">📰</text>
+    <text x="690" y="62" text-anchor="middle" font-family="system-ui" font-size="16" fill="#94a3b8">Nyheter</text>
   </g>
 
   <!-- URL -->
