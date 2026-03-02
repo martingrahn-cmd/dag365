@@ -7,11 +7,11 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WGGY2Z6DM8"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-WGGY2Z6DM8');</script>
     <title>dag365 - Vecka, datum, namnsdag</title>
-    <meta name="description" content="dag365 - Din dagliga översikt med veckonummer, datum, namnsdag, soltider, väderprognos och OS 2026-schema. Installera som app och få push-notiser när Sverige tävlar!">
-    <meta name="keywords" content="veckonummer, datum, namnsdag, soltider, väder, OS 2026, Milano-Cortina, Sverige, kalender">
+    <meta name="description" content="dag365 - Din dagliga översikt med veckonummer, datum, namnsdag, soltider och väderprognos. Installera som app!">
+    <meta name="keywords" content="veckonummer, datum, namnsdag, soltider, väder, Sverige, kalender">
     <meta name="author" content="dag365">
     <meta property="og:title" content="dag365 - Vecka, datum, namnsdag">
-    <meta property="og:description" content="Din dagliga översikt med veckonummer, namnsdag, soltider och OS 2026-schema. Få notiser när Sverige tävlar!">
+    <meta property="og:description" content="Din dagliga översikt med veckonummer, namnsdag, soltider och väderprognos.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://dag365.se">
     <meta property="og:image" content="https://dag365.se/og-image.png">
@@ -45,7 +45,7 @@
         "@type": "WebApplication",
         "name": "dag365",
         "url": "https://dag365.se",
-        "description": "Din dagliga översikt med veckonummer, datum, namnsdag, soltider, väderprognos och OS 2026-schema.",
+        "description": "Din dagliga översikt med veckonummer, datum, namnsdag, soltider och väderprognos.",
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Web",
         "inLanguage": "sv",
@@ -1079,198 +1079,6 @@
             }
         }
         
-        /* Olympics Section */
-        .olympics-section {
-            margin-top: 2rem;
-        }
-
-        .olympics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-        }
-
-        .olympics-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem;
-            transition: all 0.2s;
-        }
-
-        .olympics-card:hover {
-            background: var(--card-hover);
-            border-color: #ffd700;
-        }
-
-        .olympics-card.live {
-            border-color: #ff4444;
-            background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, var(--card) 100%);
-            animation: pulse-live 2s infinite;
-        }
-
-        .olympics-card.today {
-            border-color: #ffd700;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, var(--card) 100%);
-        }
-
-        @keyframes pulse-live {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.4); }
-            50% { box-shadow: 0 0 0 8px rgba(255, 68, 68, 0); }
-        }
-
-        .olympics-date {
-            font-size: 0.65rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.3rem;
-        }
-
-        .olympics-time {
-            font-family: 'Space Mono', monospace;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--blue);
-            margin-bottom: 0.3rem;
-        }
-
-        .olympics-card.live .olympics-time {
-            color: #ff4444;
-        }
-
-        .olympics-card.live .olympics-time::before {
-            content: '🔴 LIVE ';
-            font-size: 0.8rem;
-        }
-
-        .olympics-sport {
-            font-size: 0.7rem;
-            color: var(--muted);
-            margin-bottom: 0.25rem;
-        }
-
-        .olympics-event {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text);
-            line-height: 1.3;
-        }
-
-        .olympics-filter {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 0.3rem 0.6rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.2s;
-        }
-
-        .olympics-filter:hover,
-        .olympics-filter.active {
-            border-color: #ffd700;
-            color: var(--text);
-            background: var(--card-hover);
-        }
-
-        .olympics-nav {
-            flex-wrap: wrap;
-            gap: 0.3rem;
-        }
-
-        .olympics-date-select {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 0.3rem 0.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.2s;
-        }
-
-        .olympics-date-select:hover,
-        .olympics-date-select:focus {
-            border-color: #ffd700;
-            outline: none;
-        }
-
-        .olympics-actions {
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .olympics-toggle {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.2s;
-        }
-
-        .olympics-toggle:hover {
-            border-color: #ffd700;
-            background: var(--card-hover);
-        }
-
-        .olympics-grid.expanded {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .olympics-card .notify-toggle {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: none;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            opacity: 0.4;
-            transition: all 0.2s;
-            padding: 0.2rem;
-        }
-
-        .olympics-card .notify-toggle:hover {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-
-        .olympics-card .notify-toggle.active {
-            opacity: 1;
-        }
-
-        .olympics-card {
-            position: relative;
-        }
-
-        @media (max-width: 900px) {
-            .olympics-grid.expanded {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 700px) {
-            .olympics-grid {
-                grid-template-columns: 1fr;
-            }
-            .olympics-grid.expanded {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 500px) {
-            .olympics-grid.expanded {
-                grid-template-columns: 1fr;
-            }
-        }
 
         /* Footer */
         footer {
@@ -1280,6 +1088,21 @@
             color: var(--muted);
             border-top: 1px solid var(--border);
             margin-top: 2rem;
+        }
+
+        .footer-games {
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-games a {
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-games a:hover {
+            text-decoration: underline;
         }
         
         /* Responsive */
@@ -1348,7 +1171,7 @@
         <header class="site-header" role="banner">
             <h1 class="logo">dag<span>365</span></h1>
             <nav class="header-right" aria-label="Huvudnavigering">
-                <button id="notify-btn" class="install-btn" title="Klicka för att aktivera OS-notiser" aria-label="Aktivera push-notiser för OS-tävlingar">🔔 Aktivera notiser</button>
+                <button id="notify-btn" class="install-btn" title="Klicka för att aktivera notiser" aria-label="Aktivera push-notiser">🔔 Aktivera notiser</button>
                 <button id="install-btn" class="install-btn" title="Installera app" aria-label="Installera dag365 som app">📲 Installera</button>
                 <button id="theme-toggle" class="theme-toggle" title="Byt tema" aria-label="Växla mellan mörkt och ljust tema">🌙</button>
                 <div class="header-time" id="clock" aria-label="Klocka">--:--:--</div>
@@ -1453,36 +1276,6 @@
             </div>
         </div>
 
-        <section class="olympics-section" aria-label="OS Milano-Cortina 2026">
-            <div class="section-header">
-                <h2 class="section-title">🇸🇪 OS Milano-Cortina 2026</h2>
-                <nav class="section-nav olympics-nav" aria-label="Filtrera OS-sporter">
-                    <button class="olympics-filter active" data-sport="all" aria-label="Visa alla sporter">Alla</button>
-                    <button class="olympics-filter" data-sport="hockey" aria-label="Filtrera ishockey">🏒</button>
-                    <button class="olympics-filter" data-sport="curling" aria-label="Filtrera curling">🥌</button>
-                    <button class="olympics-filter" data-sport="skiing" aria-label="Filtrera längdskidåkning">⛷️</button>
-                    <button class="olympics-filter" data-sport="biathlon" aria-label="Filtrera skidskytte">🎯</button>
-                    <button class="olympics-filter" data-sport="alpine" aria-label="Filtrera alpin skidåkning">🏔️</button>
-                    <button class="olympics-filter" data-sport="freestyle" aria-label="Filtrera freestyle">🎿</button>
-                    <button class="olympics-filter" data-sport="snowboard" aria-label="Filtrera snowboard">🏂</button>
-                    <button class="olympics-filter" data-sport="jumping" aria-label="Filtrera backhoppning">🦅</button>
-                    <button class="olympics-filter" data-sport="figureskating" aria-label="Filtrera konståkning">⛸️</button>
-                    <button class="olympics-filter" data-sport="luge" aria-label="Filtrera rodel">🛷</button>
-                    <select id="olympics-date-filter" class="olympics-date-select" aria-label="Filtrera efter datum">
-                        <option value="all">Alla dagar</option>
-                    </select>
-                </nav>
-            </div>
-            <div class="olympics-grid" id="olympics-grid">
-                <div class="olympics-card">
-                    <div class="olympics-time">⏳</div>
-                    <div class="olympics-event">Laddar OS-schema...</div>
-                </div>
-            </div>
-            <div class="olympics-actions">
-                <button id="olympics-show-all" class="olympics-toggle" aria-label="Visa eller dölj hela OS-schemat">Visa hela schemat ▼</button>
-            </div>
-        </section>
 
         <section aria-label="Årskalender">
         <div class="section-header">
@@ -1554,6 +1347,7 @@
         </main>
 
         <footer role="contentinfo">
+            <p class="footer-games">Tid över? Prova <a href="https://gamevolt.io" target="_blank" rel="noopener">dessa spel</a></p>
             <p>dag365 — Snabb. Ren. Svensk.</p>
         </footer>
     </div>
@@ -3195,349 +2989,13 @@
         // Initialize quotes
         initQuote();
 
-        // ============ OS 2026 MILANO-CORTINA ============
+        // OS-data borttagen (olympicsEvents, renderOlympics, etc.) - Firebase behålls för framtida OS-evenemang
 
-        const olympicsEvents = [
-            // Curling Mixed Dubbel (4-10 feb) - Wranå/Wranå
-            { date: '2026-02-04', time: '18:05', sport: 'curling', event: 'Sverige – Sydkorea', type: 'Mixed dubbel' },
-            { date: '2026-02-05', time: '09:05', sport: 'curling', event: 'Sverige – Tjeckien', type: 'Mixed dubbel' },
-            { date: '2026-02-05', time: '18:05', sport: 'curling', event: 'Estland – Sverige', type: 'Mixed dubbel' },
-            { date: '2026-02-06', time: '09:05', sport: 'curling', event: 'Storbritannien – Sverige', type: 'Mixed dubbel' },
-            { date: '2026-02-06', time: '13:35', sport: 'curling', event: 'Norge – Sverige', type: 'Mixed dubbel' },
-            { date: '2026-02-07', time: '09:05', sport: 'curling', event: 'Sverige – Schweiz', type: 'Mixed dubbel' },
-            { date: '2026-02-07', time: '13:35', sport: 'curling', event: 'Sverige – Italien', type: 'Mixed dubbel' },
-            { date: '2026-02-08', time: '13:35', sport: 'curling', event: 'Kanada – Sverige', type: 'Mixed dubbel' },
-            { date: '2026-02-08', time: '18:05', sport: 'curling', event: 'USA – Sverige', type: 'Mixed dubbel' },
-            { date: '2026-02-09', time: '18:05', sport: 'curling', event: 'Semifinal', type: 'Mixed dubbel' },
-            { date: '2026-02-10', time: '09:05', sport: 'curling', event: 'Bronsmatch', type: 'Mixed dubbel' },
-            { date: '2026-02-10', time: '18:05', sport: 'curling', event: 'Final', type: 'Mixed dubbel' },
-
-            // Snowboard Big Air (5-6 feb)
-            { date: '2026-02-05', time: '19:30', sport: 'snowboard', event: 'Big Air kval', type: 'Snowboard herrar' },
-            { date: '2026-02-06', time: '19:30', sport: 'snowboard', event: 'Big Air final', type: 'Snowboard herrar' },
-
-            // Hockey Damer (5-19 feb)
-            { date: '2026-02-05', time: '12:10', sport: 'hockey', event: 'Sverige – Tyskland', type: 'Damer gruppspel' },
-            { date: '2026-02-07', time: '14:40', sport: 'hockey', event: 'Sverige – Italien', type: 'Damer gruppspel' },
-            { date: '2026-02-08', time: '16:40', sport: 'hockey', event: 'Frankrike – Sverige', type: 'Damer gruppspel' },
-            { date: '2026-02-10', time: '12:10', sport: 'hockey', event: 'Japan – Sverige', type: 'Damer gruppspel' },
-            { date: '2026-02-13', time: '16:40', sport: 'hockey', event: 'Sverige – Tjeckien', type: 'Damer kvartsfinal' },
-            { date: '2026-02-16', time: '16:40', sport: 'hockey', event: 'USA – Sverige', type: 'Damer semifinal' },
-            { date: '2026-02-19', time: '14:40', sport: 'hockey', event: 'Sverige – Schweiz', type: 'Damer bronsmatch' },
-
-            // Längdskidor (7-22 feb) - OBS: Från 2026 kör damer & herrar samma distanser!
-            { date: '2026-02-07', time: '13:00', sport: 'skiing', event: 'Skiathlon 10+10 km', type: 'Längd damer' },
-            { date: '2026-02-08', time: '12:30', sport: 'skiing', event: 'Skiathlon 10+10 km', type: 'Längd herrar' },
-            { date: '2026-02-10', time: '11:45', sport: 'skiing', event: 'Sprint final', type: 'Längd' },
-            { date: '2026-02-12', time: '13:00', sport: 'skiing', event: '10 km fristil', type: 'Längd damer' },
-            { date: '2026-02-13', time: '12:00', sport: 'skiing', event: '10 km fri stil', type: 'Längd herrar' },
-            { date: '2026-02-14', time: '12:00', sport: 'skiing', event: 'Stafett 4x7,5 km', type: 'Längd damer' },
-            { date: '2026-02-15', time: '12:00', sport: 'skiing', event: 'Stafett 4x7,5 km', type: 'Längd herrar' },
-            { date: '2026-02-18', time: '11:00', sport: 'skiing', event: 'Lagsprint', type: 'Längd' },
-            { date: '2026-02-21', time: '11:00', sport: 'skiing', event: '50 km masstart', type: 'Längd herrar' },
-            { date: '2026-02-22', time: '10:00', sport: 'skiing', event: '50 km masstart', type: 'Längd damer' },
-
-            // Freeski Slopestyle (7-10 feb)
-            { date: '2026-02-07', time: '10:30', sport: 'freestyle', event: 'Slopestyle kval', type: 'Freeski damer' },
-            { date: '2026-02-07', time: '14:00', sport: 'freestyle', event: 'Slopestyle kval', type: 'Freeski herrar' },
-            { date: '2026-02-09', time: '12:30', sport: 'freestyle', event: 'Slopestyle final', type: 'Freeski damer' },
-            { date: '2026-02-10', time: '12:30', sport: 'freestyle', event: 'Slopestyle final', type: 'Freeski herrar' },
-
-            // Skidskytte (8-21 feb)
-            { date: '2026-02-08', time: '14:05', sport: 'biathlon', event: 'Mixedstafett', type: 'Skidskytte' },
-            { date: '2026-02-10', time: '13:30', sport: 'biathlon', event: 'Distans 20 km', type: 'Skidskytte herrar' },
-            { date: '2026-02-11', time: '14:15', sport: 'biathlon', event: 'Distans 15 km', type: 'Skidskytte damer' },
-            { date: '2026-02-13', time: '14:00', sport: 'biathlon', event: 'Sprint 10 km', type: 'Skidskytte herrar' },
-            { date: '2026-02-14', time: '14:00', sport: 'biathlon', event: 'Sprint 7,5 km', type: 'Skidskytte damer' },
-            { date: '2026-02-15', time: '11:15', sport: 'biathlon', event: 'Jaktstart 12,5 km', type: 'Skidskytte herrar' },
-            { date: '2026-02-15', time: '14:45', sport: 'biathlon', event: 'Jaktstart 10 km', type: 'Skidskytte damer' },
-            { date: '2026-02-18', time: '14:30', sport: 'biathlon', event: 'Stafett 4x7,5 km', type: 'Skidskytte herrar' },
-            { date: '2026-02-19', time: '14:30', sport: 'biathlon', event: 'Stafett 4x6 km', type: 'Skidskytte damer' },
-            { date: '2026-02-20', time: '14:30', sport: 'biathlon', event: 'Masstart 15 km', type: 'Skidskytte herrar' },
-            { date: '2026-02-21', time: '14:30', sport: 'biathlon', event: 'Masstart 12,5 km', type: 'Skidskytte damer' },
-
-            // Snowboard Big Air Damer (8-9 feb)
-            { date: '2026-02-08', time: '19:30', sport: 'snowboard', event: 'Big Air kval', type: 'Snowboard damer' },
-            { date: '2026-02-09', time: '19:30', sport: 'snowboard', event: 'Big Air final', type: 'Snowboard damer' },
-
-            // Puckelpist / Freestyle Moguls (10 feb)
-            { date: '2026-02-10', time: '11:15', sport: 'freestyle', event: 'Puckelpist kval', type: 'Freestyle herrar' },
-            { date: '2026-02-10', time: '19:30', sport: 'freestyle', event: 'Puckelpist final', type: 'Freestyle herrar (Wallberg)' },
-
-            // Backhoppning (10-16 feb)
-            { date: '2026-02-10', time: '18:45', sport: 'jumping', event: 'Mixed team', type: 'Backhoppning' },
-            { date: '2026-02-11', time: '18:45', sport: 'jumping', event: 'Normalbacke', type: 'Backhoppning damer' },
-            { date: '2026-02-13', time: '18:45', sport: 'jumping', event: 'Normalbacke', type: 'Backhoppning herrar' },
-            { date: '2026-02-15', time: '18:45', sport: 'jumping', event: 'Stora backen', type: 'Backhoppning herrar' },
-            { date: '2026-02-16', time: '19:00', sport: 'jumping', event: 'Super team', type: 'Backhoppning herrar' },
-
-            // Nordisk kombination (11-17 feb)
-            { date: '2026-02-11', time: '10:00', sport: 'jumping', event: 'Gundersen normalbacke + 10km', type: 'Nordisk komb. herrar' },
-            { date: '2026-02-14', time: '10:00', sport: 'jumping', event: 'Gundersen normalbacke + 5km', type: 'Nordisk komb. damer' },
-            { date: '2026-02-17', time: '10:00', sport: 'jumping', event: 'Gundersen stora backen + 10km', type: 'Nordisk komb. herrar' },
-
-            // Snowboard Halfpipe (11-13 feb)
-            { date: '2026-02-11', time: '10:30', sport: 'snowboard', event: 'Halfpipe kval', type: 'Snowboard damer' },
-            { date: '2026-02-11', time: '19:30', sport: 'snowboard', event: 'Halfpipe kval', type: 'Snowboard herrar' },
-            { date: '2026-02-12', time: '19:30', sport: 'snowboard', event: 'Halfpipe final', type: 'Snowboard damer' },
-            { date: '2026-02-13', time: '19:30', sport: 'snowboard', event: 'Halfpipe final', type: 'Snowboard herrar' },
-
-            // Curling Damer (12-18 feb) - Lag Hasselborg
-            { date: '2026-02-12', time: '09:05', sport: 'curling', event: 'Sverige – USA', type: 'Damer' },
-            { date: '2026-02-12', time: '19:05', sport: 'curling', event: 'Sverige – Japan', type: 'Damer' },
-            { date: '2026-02-13', time: '14:05', sport: 'curling', event: 'Sverige – Danmark', type: 'Damer' },
-            { date: '2026-02-14', time: '19:05', sport: 'curling', event: 'Sverige – Italien', type: 'Damer' },
-            { date: '2026-02-15', time: '14:05', sport: 'curling', event: 'Sverige – Storbritannien', type: 'Damer' },
-            { date: '2026-02-16', time: '09:05', sport: 'curling', event: 'Schweiz – Sverige', type: 'Damer' },
-            { date: '2026-02-17', time: '14:05', sport: 'curling', event: 'Kanada – Sverige', type: 'Damer' },
-            { date: '2026-02-18', time: '09:05', sport: 'curling', event: 'Sverige – Sydkorea', type: 'Damer' },
-            { date: '2026-02-18', time: '19:05', sport: 'curling', event: 'Sverige – Kina', type: 'Damer' },
-
-            // Curling Herrar (11-19 feb) - Lag Edin
-            { date: '2026-02-11', time: '19:05', sport: 'curling', event: 'Italien – Sverige', type: 'Herrar' },
-            { date: '2026-02-12', time: '14:05', sport: 'curling', event: 'Storbritannien – Sverige', type: 'Herrar' },
-            { date: '2026-02-13', time: '19:05', sport: 'curling', event: 'Kanada – Sverige', type: 'Herrar' },
-            { date: '2026-02-14', time: '14:05', sport: 'curling', event: 'Sverige – USA', type: 'Herrar' },
-            { date: '2026-02-15', time: '09:05', sport: 'curling', event: 'Kina – Sverige', type: 'Herrar' },
-            { date: '2026-02-16', time: '14:05', sport: 'curling', event: 'Sverige – Tyskland', type: 'Herrar' },
-            { date: '2026-02-17', time: '09:05', sport: 'curling', event: 'Schweiz – Sverige', type: 'Herrar' },
-            { date: '2026-02-17', time: '19:05', sport: 'curling', event: 'Sverige – Norge', type: 'Herrar' },
-            { date: '2026-02-19', time: '09:05', sport: 'curling', event: 'Sverige – Tjeckien', type: 'Herrar' },
-
-            // Hockey Herrar (11-22 feb)
-            { date: '2026-02-11', time: '21:10', sport: 'hockey', event: 'Sverige – Italien', type: 'Herrar gruppspel' },
-            { date: '2026-02-13', time: '12:10', sport: 'hockey', event: 'Finland – Sverige', type: 'Herrar gruppspel' },
-            { date: '2026-02-14', time: '12:10', sport: 'hockey', event: 'Sverige – Slovakien', type: 'Herrar gruppspel' },
-            { date: '2026-02-17', time: '16:40', sport: 'hockey', event: 'Sverige – Lettland', type: 'Herrar åttondelsfinal' },
-            { date: '2026-02-18', time: '21:10', sport: 'hockey', event: 'USA – Sverige', type: 'Herrar kvartsfinal' },
-            { date: '2026-02-20', time: '21:10', sport: 'hockey', event: 'Semifinal', type: 'Herrar semifinal' },
-
-            // Alpint - Storslalom & Slalom (14-18 feb)
-            { date: '2026-02-14', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint herrar (Jakobsen)' },
-            { date: '2026-02-14', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint herrar' },
-            { date: '2026-02-15', time: '10:00', sport: 'alpine', event: 'Storslalom åk 1', type: 'Alpint damer (Hector)' },
-            { date: '2026-02-15', time: '13:30', sport: 'alpine', event: 'Storslalom åk 2', type: 'Alpint damer (Hector)' },
-            { date: '2026-02-16', time: '10:00', sport: 'alpine', event: 'Slalom åk 1', type: 'Alpint herrar (Jakobsen)' },
-            { date: '2026-02-16', time: '13:30', sport: 'alpine', event: 'Slalom åk 2', type: 'Alpint herrar' },
-            { date: '2026-02-18', time: '10:00', sport: 'alpine', event: 'Slalom åk 1', type: 'Alpint damer (Swenn Larsson)' },
-            { date: '2026-02-18', time: '13:30', sport: 'alpine', event: 'Slalom åk 2', type: 'Alpint damer' },
-
-            // Snowboard Slopestyle (17-18 feb)
-            { date: '2026-02-17', time: '10:30', sport: 'snowboard', event: 'Slopestyle kval', type: 'Snowboard damer' },
-            { date: '2026-02-17', time: '14:00', sport: 'snowboard', event: 'Slopestyle kval', type: 'Snowboard herrar' },
-            { date: '2026-02-18', time: '12:30', sport: 'snowboard', event: 'Slopestyle final', type: 'Snowboard herrar' },
-
-            // Freeski Big Air (18-19 feb)
-            { date: '2026-02-18', time: '19:30', sport: 'freestyle', event: 'Big Air kval', type: 'Freeski herrar' },
-            { date: '2026-02-19', time: '12:30', sport: 'freestyle', event: 'Big Air final', type: 'Freeski herrar' },
-
-            // Skicross (20-21 feb)
-            { date: '2026-02-20', time: '10:00', sport: 'freestyle', event: 'Skicross kval', type: 'Freestyle herrar' },
-            { date: '2026-02-20', time: '13:00', sport: 'freestyle', event: 'Skicross final', type: 'Freestyle herrar' },
-            { date: '2026-02-21', time: '10:00', sport: 'freestyle', event: 'Skicross kval', type: 'Freestyle damer (Näslund)' },
-            { date: '2026-02-21', time: '12:00', sport: 'freestyle', event: 'Skicross final', type: 'Freestyle damer (Näslund)' },
-
-            // Rodel (7-10 feb) - Svante & Tove Kohala
-            { date: '2026-02-07', time: '17:00', sport: 'luge', event: 'Singel åk 1-2', type: 'Rodel herrar (S. Kohala)' },
-            { date: '2026-02-08', time: '17:00', sport: 'luge', event: 'Singel åk 3-4 final', type: 'Rodel herrar (S. Kohala)' },
-            { date: '2026-02-09', time: '17:00', sport: 'luge', event: 'Singel åk 1-2', type: 'Rodel damer (T. Kohala)' },
-            { date: '2026-02-10', time: '17:00', sport: 'luge', event: 'Singel åk 3-4 final', type: 'Rodel damer (T. Kohala)' },
-
-            // Konståkning (9-13 feb) - Nordebäck, Majorov/Reitan
-            { date: '2026-02-09', time: '19:20', sport: 'figureskating', event: 'Isdans rytmdans', type: 'Konståkning (Majorov/Reitan)' },
-            { date: '2026-02-10', time: '18:30', sport: 'figureskating', event: 'Singel kortprogram', type: 'Konståkning herrar (Nordebäck)' },
-            { date: '2026-02-11', time: '19:30', sport: 'figureskating', event: 'Isdans fritt program', type: 'Konståkning (Majorov/Reitan)' },
-            { date: '2026-02-13', time: '19:00', sport: 'figureskating', event: 'Singel fritt program', type: 'Konståkning herrar (Nordebäck)' },
-
-            // Parallell puckelpist / Dual Moguls (14-15 feb)
-            { date: '2026-02-14', time: '10:30', sport: 'freestyle', event: 'Parallell puckelpist final', type: 'Freestyle damer' },
-            { date: '2026-02-15', time: '10:30', sport: 'freestyle', event: 'Parallell puckelpist final', type: 'Freestyle herrar (Wallberg)' },
-
-            // Curling damer slutspel (Lag Hasselborg) - Lag Edin ute i gruppspelet
-            { date: '2026-02-20', time: '14:05', sport: 'curling', event: 'Semifinal', type: 'Curling damer' },
-            { date: '2026-02-21', time: '14:05', sport: 'curling', event: 'Bronsmatch', type: 'Curling damer' },
-            { date: '2026-02-22', time: '11:05', sport: 'curling', event: 'OS-final', type: 'Curling damer' },
-
-            // Hockey slutspel
-            { date: '2026-02-19', time: '19:10', sport: 'hockey', event: 'OS-final', type: 'Hockey damer' },
-            { date: '2026-02-21', time: '20:40', sport: 'hockey', event: 'Bronsmatch', type: 'Hockey herrar' },
-            { date: '2026-02-22', time: '14:10', sport: 'hockey', event: 'OS-final', type: 'Hockey herrar' },
-        ];
-
-        let currentOlympicsFilter = 'all';
-        let currentOlympicsDateFilter = 'all';
-        let olympicsShowAll = false;
-
-        // Ladda sparade notis-val från localStorage
-        function getNotifyEvents() {
-            try {
-                return JSON.parse(localStorage.getItem('dag365_notify_events') || '[]');
-            } catch { return []; }
-        }
-
-        function saveNotifyEvents(events) {
-            localStorage.setItem('dag365_notify_events', JSON.stringify(events));
-        }
-
-        function toggleEventNotify(eventId) {
-            let notifyEvents = getNotifyEvents();
-            if (notifyEvents.includes(eventId)) {
-                notifyEvents = notifyEvents.filter(e => e !== eventId);
-            } else {
-                notifyEvents.push(eventId);
-            }
-            saveNotifyEvents(notifyEvents);
-            renderOlympics();
-        }
-
-        function getEventId(event) {
-            return `${event.date}_${event.time}_${event.sport}`;
-        }
-
-        function renderOlympics() {
-            const grid = document.getElementById('olympics-grid');
-            const toggleBtn = document.getElementById('olympics-show-all');
-            const now = new Date();
-            const notifyEvents = getNotifyEvents();
-
-            // Populera dag-dropdown med unika datum
-            const dateSelect = document.getElementById('olympics-date-filter');
-            const uniqueDates = [...new Set(olympicsEvents.map(e => e.date))].sort();
-            const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
-
-            if (dateSelect.options.length <= 1) {
-                uniqueDates.forEach(date => {
-                    const d = new Date(date + 'T12:00:00');
-                    const label = `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1}`;
-                    const option = document.createElement('option');
-                    option.value = date;
-                    option.textContent = label;
-                    dateSelect.appendChild(option);
-                });
-            }
-            dateSelect.value = currentOlympicsDateFilter;
-
-            // Filtrera och sortera events
-            let events = olympicsEvents
-                .filter(e => currentOlympicsFilter === 'all' || e.sport === currentOlympicsFilter)
-                .filter(e => currentOlympicsDateFilter === 'all' || e.date === currentOlympicsDateFilter)
-                .map(e => {
-                    const eventDate = new Date(`${e.date}T${e.time}:00`);
-                    const endDate = new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
-                    return { ...e, eventDate, endDate, id: getEventId(e) };
-                })
-                .sort((a, b) => a.eventDate - b.eventDate);
-
-            // Hitta live och kommande events
-            const liveEvents = events.filter(e => now >= e.eventDate && now <= e.endDate);
-            const upcomingEvents = events.filter(e => e.eventDate > now);
-            const pastEvents = events.filter(e => e.endDate < now);
-
-            // Bestäm vilka som ska visas
-            let displayEvents;
-            if (olympicsShowAll) {
-                displayEvents = [...liveEvents, ...upcomingEvents];
-                grid.classList.add('expanded');
-                toggleBtn.textContent = 'Visa färre ▲';
-            } else {
-                displayEvents = [...liveEvents, ...upcomingEvents].slice(0, 6);
-                grid.classList.remove('expanded');
-                toggleBtn.textContent = `Visa hela schemat (${upcomingEvents.length} tävlingar) ▼`;
-            }
-
-            if (displayEvents.length === 0) {
-                const recentPast = pastEvents.slice(-3);
-                if (recentPast.length > 0) {
-                    grid.innerHTML = recentPast.map(e => createOlympicsCard(e, now, true, notifyEvents)).join('');
-                } else {
-                    grid.innerHTML = `<div class="olympics-card"><div class="olympics-event">Inga fler svenska tävlingar i OS 2026</div></div>`;
-                }
-                toggleBtn.style.display = 'none';
-                return;
-            }
-
-            toggleBtn.style.display = upcomingEvents.length > 6 ? 'inline-block' : 'none';
-            grid.innerHTML = displayEvents.map(e => createOlympicsCard(e, now, false, notifyEvents)).join('');
-
-            // Lägg till event listeners för notis-knappar
-            grid.querySelectorAll('.notify-toggle').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleEventNotify(btn.dataset.eventId);
-                });
-            });
-        }
-
-        function createOlympicsCard(event, now, isPast, notifyEvents) {
-            const isLive = now >= event.eventDate && now <= event.endDate;
-            const isToday = event.eventDate.toDateString() === now.toDateString();
-            const isNotifyOn = notifyEvents.includes(event.id);
-
-            const sportIcons = {
-                hockey: '🏒',
-                curling: '🥌',
-                skiing: '⛷️',
-                alpine: '🏔️',
-                freestyle: '🎿',
-                snowboard: '🏂',
-                jumping: '🦅',
-                biathlon: '🎯',
-                figureskating: '⛸️',
-                luge: '🛷'
-            };
-
-            const dayNames = ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'];
-            const dateStr = `${dayNames[event.eventDate.getDay()]} ${event.eventDate.getDate()}/${event.eventDate.getMonth() + 1}`;
-
-            let cardClass = 'olympics-card';
-            if (isLive) cardClass += ' live';
-            else if (isToday) cardClass += ' today';
-
-            const notifyBtn = !isPast ? `
-                <button class="notify-toggle ${isNotifyOn ? 'active' : ''}"
-                        data-event-id="${event.id}"
-                        title="${isNotifyOn ? 'Notis på - klicka för att stänga av' : 'Klicka för påminnelse'}">
-                    ${isNotifyOn ? '🔔' : '🔕'}
-                </button>
-            ` : '';
-
-            return `
-                <div class="${cardClass}">
-                    ${notifyBtn}
-                    <div class="olympics-date">${isPast ? 'Avslutad' : dateStr}</div>
-                    <div class="olympics-time">${event.time}</div>
-                    <div class="olympics-sport">${sportIcons[event.sport] || ''} ${event.type}</div>
-                    <div class="olympics-event">${event.event}</div>
-                </div>
-            `;
-        }
-
-        // Olympics filter click handlers
-        document.querySelectorAll('.olympics-filter').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.olympics-filter').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentOlympicsFilter = btn.dataset.sport;
-                renderOlympics();
-            });
-        });
-
-        // Olympics date filter handler
-        document.getElementById('olympics-date-filter').addEventListener('change', (e) => {
-            currentOlympicsDateFilter = e.target.value;
-            renderOlympics();
-        });
-
-        // Visa alla/färre toggle
-        document.getElementById('olympics-show-all').addEventListener('click', () => {
-            olympicsShowAll = !olympicsShowAll;
-            renderOlympics();
-        });
-
-        // Initialize Olympics
-        renderOlympics();
-        // Update every minute
-        setInterval(renderOlympics, 60000);
+        // Stubs så att Firebase-notiskoden inte kraschar
+        function getNotifyEvents() { try { return JSON.parse(localStorage.getItem('dag365_notify_events') || '[]'); } catch { return []; } }
+        function saveNotifyEvents(events) { localStorage.setItem('dag365_notify_events', JSON.stringify(events)); }
+        function renderOlympics() {}
+        let toggleEventNotify = function() {};
 
         // ============ PWA / SERVICE WORKER ============
         
@@ -3752,7 +3210,7 @@
             } else {
                 notifyBtn.innerHTML = '🔔 Aktivera notiser';
                 notifyBtn.classList.add('show');
-                notifyBtn.title = 'Klicka för att aktivera OS-notiser';
+                notifyBtn.title = 'Klicka för att aktivera notiser';
             }
         }
 
@@ -3772,7 +3230,7 @@
                 console.log('dag365: Notis-tillåtelse:', permission);
 
                 if (permission !== 'granted') {
-                    alert('Du behöver tillåta notiser för att få OS-uppdateringar.');
+                    alert('Du behöver tillåta notiser.');
                     updateNotifyButton();
                     return;
                 }
