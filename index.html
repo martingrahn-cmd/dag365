@@ -607,36 +607,112 @@
         /* Games Widget */
         .games-widget {
             grid-column: span 3;
-            background: linear-gradient(135deg, #1a2d3d 0%, #1a1a22 100%);
+            background: linear-gradient(135deg, #1e1040 0%, #0d1b2a 50%, #1a1a22 100%);
             cursor: pointer;
             text-decoration: none;
             display: block;
+            overflow: hidden;
+            position: relative;
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .games-widget::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .games-widget::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: 10%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         .games-widget:hover {
             border-color: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
         }
 
-        .games-widget .dot { background: #7c3aed; }
+        .games-widget .widget-label {
+            display: none;
+        }
 
-        .games-content {
+        .games-inner {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            justify-content: space-between;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .games-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .games-icon {
-            font-size: 2rem;
+            font-size: 2.2rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.4));
         }
 
-        .games-text {
-            font-size: 1.1rem;
-            font-weight: 500;
+        .games-text-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .games-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .games-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .games-arrow {
+            font-size: 1.2rem;
+            color: var(--muted);
+            transition: all 0.2s;
+        }
+
+        .games-widget:hover .games-arrow {
             color: #a78bfa;
+            transform: translateX(3px);
         }
 
         [data-theme="light"] .games-widget {
-            background: linear-gradient(135deg, #ede9fe 0%, #ffffff 100%);
+            background: linear-gradient(135deg, #f0e6ff 0%, #e8f0fe 50%, #ffffff 100%);
+            border-color: rgba(124, 58, 237, 0.15);
+        }
+
+        [data-theme="light"] .games-widget:hover {
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.12);
+        }
+
+        [data-theme="light"] .games-label {
+            color: #6b7280;
         }
         
         /* Calendar themeday marker */
@@ -1296,10 +1372,15 @@
             </div>
 
             <a href="https://gamevolt.io" target="_blank" rel="noopener" class="widget games-widget">
-                <div class="widget-label"><span class="dot"></span>Tid över? Prova dessa spel!</div>
-                <div class="games-content">
-                    <span class="games-icon">🎮</span>
-                    <span class="games-text">gamevolt.io</span>
+                <div class="games-inner">
+                    <div class="games-left">
+                        <span class="games-icon">🎮</span>
+                        <div class="games-text-group">
+                            <span class="games-label">Tid över? Prova dessa spel!</span>
+                            <span class="games-title">gamevolt.io</span>
+                        </div>
+                    </div>
+                    <span class="games-arrow">&#8594;</span>
                 </div>
             </a>
         </div>
