@@ -569,7 +569,48 @@
         [data-theme="light"] .themeday-widget {
             background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
         }
-        
+
+        .gamevolt-widget {
+            grid-column: span 3;
+            background: linear-gradient(135deg, #1a1040 0%, #1a1a22 100%);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .gamevolt-widget:hover {
+            background: linear-gradient(135deg, #261660 0%, #22222d 100%);
+        }
+
+        .gamevolt-widget .dot { background: #a78bfa; }
+
+        .gamevolt-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .gamevolt-icon {
+            font-size: 2rem;
+        }
+
+        .gamevolt-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #a78bfa;
+        }
+
+        .gamevolt-sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+        }
+
+        [data-theme="light"] .gamevolt-widget {
+            background: linear-gradient(135deg, #ede9fe 0%, #ffffff 100%);
+        }
+
         /* Calendar themeday marker */
         .day-cell.themeday {
             position: relative;
@@ -1076,7 +1117,8 @@
             .weather-widget,
             .stats-widget,
             .holidays-widget,
-            .themeday-widget {
+            .themeday-widget,
+            .gamevolt-widget {
                 grid-column: span 2;
             }
             .week-widget {
@@ -1223,6 +1265,17 @@
                     <span class="themeday-name" id="themeday-name">-</span>
                 </div>
             </div>
+
+            <a href="https://gamevolt.io" target="_blank" rel="noopener" class="widget gamevolt-widget" aria-label="Spela spel på gamevolt.io">
+                <div class="widget-label"><span class="dot"></span>Tid över?</div>
+                <div class="gamevolt-content">
+                    <span class="gamevolt-icon">🎮</span>
+                    <div>
+                        <div class="gamevolt-text">Prova dessa spel</div>
+                        <div class="gamevolt-sub">gamevolt.io</div>
+                    </div>
+                </div>
+            </a>
         </div>
 
         <section aria-label="Årskalender">
