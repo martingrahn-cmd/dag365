@@ -603,6 +603,41 @@
         [data-theme="light"] .themeday-widget {
             background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
         }
+
+        /* Games Widget */
+        .games-widget {
+            grid-column: span 3;
+            background: linear-gradient(135deg, #1a2d3d 0%, #1a1a22 100%);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .games-widget:hover {
+            border-color: #7c3aed;
+        }
+
+        .games-widget .dot { background: #7c3aed; }
+
+        .games-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .games-icon {
+            font-size: 2rem;
+        }
+
+        .games-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #a78bfa;
+        }
+
+        [data-theme="light"] .games-widget {
+            background: linear-gradient(135deg, #ede9fe 0%, #ffffff 100%);
+        }
         
         /* Calendar themeday marker */
         .day-cell.themeday {
@@ -1110,7 +1145,8 @@
             .weather-widget,
             .stats-widget,
             .holidays-widget,
-            .themeday-widget {
+            .themeday-widget,
+            .games-widget {
                 grid-column: span 2;
             }
             .week-widget {
@@ -1258,6 +1294,14 @@
                     <span class="themeday-name" id="themeday-name">-</span>
                 </div>
             </div>
+
+            <a href="https://gamevolt.io" target="_blank" rel="noopener" class="widget games-widget">
+                <div class="widget-label"><span class="dot"></span>Tid över? Prova dessa spel!</div>
+                <div class="games-content">
+                    <span class="games-icon">🎮</span>
+                    <span class="games-text">gamevolt.io</span>
+                </div>
+            </a>
         </div>
 
         <section aria-label="Årskalender">
