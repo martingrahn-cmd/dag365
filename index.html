@@ -436,6 +436,13 @@
             font-size: 1.8rem;
             line-height: 1;
             margin-bottom: 0.3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .forecast-icon svg {
+            display: block;
         }
         
         .forecast-temps {
@@ -527,26 +534,86 @@
         .stats-widget {
             grid-column: span 3;
         }
-        
+
         .stats-widget .dot { background: var(--pink); }
-        
+
+        .stats-content {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .progress-ring-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 6;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#progress-gradient);
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .progress-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-ring-percent {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--pink);
+            line-height: 1;
+        }
+
+        .progress-ring-label {
+            font-size: 0.5rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            flex: 1;
+        }
+
         .stat-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem 0;
+            padding: 0.35rem 0;
             border-bottom: 1px solid var(--border);
         }
-        
+
         .stat-row:last-child { border-bottom: none; }
-        
+
         .stat-label {
             color: var(--muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
-        
+
         .stat-value {
             font-family: 'Space Mono', monospace;
             font-weight: 700;
+            font-size: 0.85rem;
         }
         
         /* Holidays Widget */
@@ -872,6 +939,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        .day-cell:not(.empty):hover {
+            background: rgba(78, 140, 255, 0.15);
+        }
+
         .day-cell:active:not(.empty) {
             transform: scale(0.9);
         }
@@ -923,6 +994,11 @@
 
         .day-info-popup .themeday-text {
             color: var(--orange);
+        }
+
+        .day-info-popup .nameday-text {
+            color: var(--green);
+            font-weight: 500;
         }
         
         .day-cell.today {
@@ -1349,17 +1425,33 @@
             
             <div class="widget stats-widget">
                 <div class="widget-label"><span class="dot"></span>År <span id="current-year">2025</span></div>
-                <div class="stat-row">
-                    <span class="stat-label">Dag</span>
-                    <span class="stat-value" id="day-of-year">-- / 365</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">Kvar</span>
-                    <span class="stat-value" id="days-left">--</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">Progress</span>
-                    <span class="stat-value" id="year-progress">--%</span>
+                <div class="stats-content">
+                    <div class="progress-ring-container">
+                        <svg class="progress-ring" width="90" height="90" viewBox="0 0 90 90">
+                            <defs>
+                                <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="var(--pink)" />
+                                    <stop offset="100%" stop-color="var(--blue)" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-bg" cx="45" cy="45" r="38" />
+                            <circle class="progress-ring-fill" id="progress-ring-fill" cx="45" cy="45" r="38" />
+                        </svg>
+                        <div class="progress-ring-text">
+                            <div class="progress-ring-percent" id="year-progress">--%</div>
+                            <div class="progress-ring-label">Klart</div>
+                        </div>
+                    </div>
+                    <div class="stats-details">
+                        <div class="stat-row">
+                            <span class="stat-label">Dag</span>
+                            <span class="stat-value" id="day-of-year">-- / 365</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Kvar</span>
+                            <span class="stat-value" id="days-left">--</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -2148,8 +2240,17 @@
             // Year stats
             document.getElementById('current-year').textContent = now.getFullYear();
             document.getElementById('day-of-year').textContent = `${dayOfYear} / ${daysInYear}`;
-            document.getElementById('days-left').textContent = daysLeft;
+            document.getElementById('days-left').textContent = `${daysLeft} dagar`;
             document.getElementById('year-progress').textContent = `${progress}%`;
+
+            // Animate progress ring
+            const ring = document.getElementById('progress-ring-fill');
+            if (ring) {
+                const radius = 38;
+                const circumference = 2 * Math.PI * radius;
+                ring.style.strokeDasharray = `${circumference}`;
+                ring.style.strokeDashoffset = `${circumference - (progress / 100) * circumference}`;
+            }
             
             // Theme day
             const themeDay = getThemeDay(now.getFullYear(), now.getMonth(), now.getDate());
@@ -2163,35 +2264,88 @@
             }
         }
         
-        // Theme handling
-        function loadTheme() {
-            const saved = localStorage.getItem('dagskoll_theme');
-            return saved || 'dark';
+        // Theme handling with auto mode (sun-based)
+        let sunTimes = { sunrise: null, sunset: null };
+
+        function loadThemeMode() {
+            // Migrate from old key
+            const old = localStorage.getItem('dagskoll_theme');
+            if (old && !localStorage.getItem('dagskoll_theme_mode')) {
+                localStorage.setItem('dagskoll_theme_mode', old);
+                localStorage.removeItem('dagskoll_theme');
+                return old;
+            }
+            return localStorage.getItem('dagskoll_theme_mode') || 'auto';
         }
-        
-        function saveTheme(theme) {
-            localStorage.setItem('dagskoll_theme', theme);
+
+        function saveThemeMode(mode) {
+            localStorage.setItem('dagskoll_theme_mode', mode);
         }
-        
+
+        function getAutoTheme() {
+            if (sunTimes.sunrise && sunTimes.sunset) {
+                const now = new Date();
+                const nowMinutes = now.getHours() * 60 + now.getMinutes();
+                const sunriseMinutes = sunTimes.sunrise.getHours() * 60 + sunTimes.sunrise.getMinutes();
+                const sunsetMinutes = sunTimes.sunset.getHours() * 60 + sunTimes.sunset.getMinutes();
+                return (nowMinutes >= sunriseMinutes && nowMinutes < sunsetMinutes) ? 'light' : 'dark';
+            }
+            // Fallback: light between 07:00-19:00
+            const h = new Date().getHours();
+            return (h >= 7 && h < 19) ? 'light' : 'dark';
+        }
+
+        function resolveTheme() {
+            const mode = loadThemeMode();
+            if (mode === 'auto') return getAutoTheme();
+            return mode;
+        }
+
         function applyTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        function updateThemeToggleButton() {
             const toggle = document.getElementById('theme-toggle');
-            toggle.textContent = theme === 'dark' ? '🌙' : '☀️';
-            toggle.title = theme === 'dark' ? 'Byt till ljust tema' : 'Byt till mörkt tema';
+            const mode = loadThemeMode();
+            if (mode === 'auto') {
+                toggle.textContent = '🌗';
+                toggle.title = 'Tema: Auto (baserat på sol) — Klicka för mörkt';
+            } else if (mode === 'dark') {
+                toggle.textContent = '🌙';
+                toggle.title = 'Tema: Mörkt — Klicka för ljust';
+            } else {
+                toggle.textContent = '☀️';
+                toggle.title = 'Tema: Ljust — Klicka för auto';
+            }
         }
-        
+
         function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme') || 'dark';
-            const newTheme = current === 'dark' ? 'light' : 'dark';
-            applyTheme(newTheme);
-            saveTheme(newTheme);
+            const mode = loadThemeMode();
+            // Cycle: auto → dark → light → auto
+            const next = mode === 'auto' ? 'dark' : mode === 'dark' ? 'light' : 'auto';
+            saveThemeMode(next);
+            applyTheme(resolveTheme());
+            updateThemeToggleButton();
         }
-        
+
+        function autoThemeCheck() {
+            if (loadThemeMode() === 'auto') {
+                applyTheme(getAutoTheme());
+            }
+        }
+
         // Initialize theme immediately to prevent flash
-        applyTheme(loadTheme());
-        
+        applyTheme(resolveTheme());
+
         // Theme toggle click handler
         document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+        // Update button text once DOM ready
+        updateThemeToggleButton();
+
+        // Check auto theme every minute
+        setInterval(autoThemeCheck, 60000);
         
         // Swedish cities with coordinates
         const CITIES = {
@@ -2243,20 +2397,25 @@
                 if (data.daily) {
                     const sunrise = new Date(data.daily.sunrise[0]);
                     const sunset = new Date(data.daily.sunset[0]);
-                    
-                    document.getElementById('sunrise').textContent = 
+
+                    // Store for auto-theme
+                    sunTimes.sunrise = sunrise;
+                    sunTimes.sunset = sunset;
+                    autoThemeCheck();
+
+                    document.getElementById('sunrise').textContent =
                         sunrise.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-                    document.getElementById('sunset').textContent = 
+                    document.getElementById('sunset').textContent =
                         sunset.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-                    
+
                     // Calculate daylight
                     const daylightMs = sunset - sunrise;
                     const daylightHours = Math.floor(daylightMs / (1000 * 60 * 60));
                     const daylightMinutes = Math.floor((daylightMs % (1000 * 60 * 60)) / (1000 * 60));
-                    
-                    document.getElementById('daylight-text').textContent = 
+
+                    document.getElementById('daylight-text').textContent =
                         `${daylightHours}h ${daylightMinutes}m dagsljus`;
-                    
+
                     // Daylight bar (percentage of 24h)
                     const daylightPercent = (daylightMs / (24 * 60 * 60 * 1000)) * 100;
                     document.getElementById('daylight-bar').style.width = `${daylightPercent}%`;
@@ -2266,38 +2425,56 @@
             }
         }
         
+        // Animated SVG weather icons
+        function weatherSVG(type) {
+            const icons = {
+                sun: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="32" r="12" fill="#fbbf24" opacity="0.9"><animate attributeName="r" values="11;13;11" dur="3s" repeatCount="indefinite"/></circle><g stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7"><line x1="32" y1="6" x2="32" y2="14"><animate attributeName="y1" values="6;4;6" dur="3s" repeatCount="indefinite"/></line><line x1="32" y1="50" x2="32" y2="58"><animate attributeName="y2" values="58;60;58" dur="3s" repeatCount="indefinite"/></line><line x1="6" y1="32" x2="14" y2="32"/><line x1="50" y1="32" x2="58" y2="32"/><line x1="13" y1="13" x2="18.7" y2="18.7"/><line x1="45.3" y1="45.3" x2="51" y2="51"/><line x1="51" y1="13" x2="45.3" y2="18.7"/><line x1="18.7" y1="45.3" x2="13" y2="51"/></g></svg>`,
+                sunCloud: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="26" cy="22" r="9" fill="#fbbf24" opacity="0.85"><animate attributeName="r" values="8;10;8" dur="3s" repeatCount="indefinite"/></circle><g stroke="#fbbf24" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"><line x1="26" y1="5" x2="26" y2="10"/><line x1="11" y1="22" x2="6" y2="22"/><line x1="14" y1="10" x2="10.5" y2="6.5"/><line x1="38" y1="10" x2="41.5" y2="6.5"/></g><path d="M22 48 C12 48 8 42 12 36 C14 32 18 30 23 31 C24 26 30 23 36 25 C42 27 44 32 42 36 C48 36 50 42 46 46 C44 48 22 48 22 48Z" fill="#94a3b8" opacity="0.85"><animate attributeName="d" values="M22 48 C12 48 8 42 12 36 C14 32 18 30 23 31 C24 26 30 23 36 25 C42 27 44 32 42 36 C48 36 50 42 46 46 C44 48 22 48 22 48Z;M23 47 C13 47 9 41 13 35 C15 31 19 29 24 30 C25 25 31 22 37 24 C43 26 45 31 43 35 C49 35 51 41 47 45 C45 47 23 47 23 47Z;M22 48 C12 48 8 42 12 36 C14 32 18 30 23 31 C24 26 30 23 36 25 C42 27 44 32 42 36 C48 36 50 42 46 46 C44 48 22 48 22 48Z" dur="4s" repeatCount="indefinite"/></path></svg>`,
+                cloud: `<svg viewBox="0 0 64 64" width="44" height="44"><path d="M18 46 C8 46 4 38 10 32 C12 28 16 26 22 27 C24 20 32 17 38 20 C44 23 46 28 44 33 C50 33 54 38 50 43 C48 46 18 46 18 46Z" fill="#94a3b8" opacity="0.8"><animate attributeName="d" values="M18 46 C8 46 4 38 10 32 C12 28 16 26 22 27 C24 20 32 17 38 20 C44 23 46 28 44 33 C50 33 54 38 50 43 C48 46 18 46 18 46Z;M19 45 C9 45 5 37 11 31 C13 27 17 25 23 26 C25 19 33 16 39 19 C45 22 47 27 45 32 C51 32 55 37 51 42 C49 45 19 45 19 45Z;M18 46 C8 46 4 38 10 32 C12 28 16 26 22 27 C24 20 32 17 38 20 C44 23 46 28 44 33 C50 33 54 38 50 43 C48 46 18 46 18 46Z" dur="5s" repeatCount="indefinite"/></path></svg>`,
+                overcast: `<svg viewBox="0 0 64 64" width="44" height="44"><path d="M14 42 C6 42 2 36 6 30 C8 26 14 24 18 26 C20 20 26 18 32 20 C36 22 40 26 38 30 C44 30 48 34 44 39 C42 42 14 42 14 42Z" fill="#64748b" opacity="0.7"/><path d="M24 50 C14 50 10 44 14 38 C16 34 20 32 26 33 C28 26 36 23 42 26 C48 29 50 34 48 38 C54 38 56 44 52 48 C50 50 24 50 24 50Z" fill="#94a3b8" opacity="0.85"><animate attributeName="d" values="M24 50 C14 50 10 44 14 38 C16 34 20 32 26 33 C28 26 36 23 42 26 C48 29 50 34 48 38 C54 38 56 44 52 48 C50 50 24 50 24 50Z;M25 49 C15 49 11 43 15 37 C17 33 21 31 27 32 C29 25 37 22 43 25 C49 28 51 33 49 37 C55 37 57 43 53 47 C51 49 25 49 25 49Z;M24 50 C14 50 10 44 14 38 C16 34 20 32 26 33 C28 26 36 23 42 26 C48 29 50 34 48 38 C54 38 56 44 52 48 C50 50 24 50 24 50Z" dur="5s" repeatCount="indefinite"/></path></svg>`,
+                fog: `<svg viewBox="0 0 64 64" width="44" height="44"><g stroke="#94a3b8" stroke-width="3" stroke-linecap="round" fill="none"><line x1="12" y1="26" x2="52" y2="26" opacity="0.4"><animate attributeName="x1" values="12;16;12" dur="4s" repeatCount="indefinite"/></line><line x1="8" y1="34" x2="56" y2="34" opacity="0.6"><animate attributeName="x1" values="8;12;8" dur="3.5s" repeatCount="indefinite"/></line><line x1="14" y1="42" x2="50" y2="42" opacity="0.5"><animate attributeName="x1" values="14;10;14" dur="4.5s" repeatCount="indefinite"/></line><line x1="10" y1="50" x2="54" y2="50" opacity="0.3"><animate attributeName="x1" values="10;14;10" dur="3.8s" repeatCount="indefinite"/></line></g></svg>`,
+                rain: `<svg viewBox="0 0 64 64" width="44" height="44"><path d="M16 34 C8 34 4 28 8 22 C10 18 14 16 20 17 C22 12 28 10 34 12 C40 14 42 18 40 22 C46 22 48 28 44 32 C42 34 16 34 16 34Z" fill="#94a3b8" opacity="0.8"/><g stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round"><line x1="20" y1="38" x2="18" y2="46"><animate attributeName="y1" values="36;46;36" dur="1s" repeatCount="indefinite"/><animate attributeName="y2" values="44;54;44" dur="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></line><line x1="30" y1="40" x2="28" y2="48"><animate attributeName="y1" values="36;46;36" dur="0.8s" repeatCount="indefinite"/><animate attributeName="y2" values="44;54;44" dur="0.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite"/></line><line x1="40" y1="38" x2="38" y2="46"><animate attributeName="y1" values="36;46;36" dur="1.1s" repeatCount="indefinite"/><animate attributeName="y2" values="44;54;44" dur="1.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/></line></g></svg>`,
+                heavyRain: `<svg viewBox="0 0 64 64" width="44" height="44"><path d="M16 32 C8 32 4 26 8 20 C10 16 14 14 20 15 C22 10 28 8 34 10 C40 12 42 16 40 20 C46 20 48 26 44 30 C42 32 16 32 16 32Z" fill="#64748b" opacity="0.9"/><g stroke="#3b82f6" stroke-width="2" stroke-linecap="round"><line x1="16" y1="36" x2="13" y2="48"><animate attributeName="y1" values="34;48;34" dur="0.7s" repeatCount="indefinite"/><animate attributeName="y2" values="46;60;46" dur="0.7s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="0.7s" repeatCount="indefinite"/></line><line x1="24" y1="38" x2="21" y2="50"><animate attributeName="y1" values="34;48;34" dur="0.6s" repeatCount="indefinite"/><animate attributeName="y2" values="46;60;46" dur="0.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="0.6s" repeatCount="indefinite"/></line><line x1="32" y1="36" x2="29" y2="48"><animate attributeName="y1" values="34;48;34" dur="0.8s" repeatCount="indefinite"/><animate attributeName="y2" values="46;60;46" dur="0.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite"/></line><line x1="40" y1="38" x2="37" y2="50"><animate attributeName="y1" values="34;48;34" dur="0.65s" repeatCount="indefinite"/><animate attributeName="y2" values="46;60;46" dur="0.65s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="0.65s" repeatCount="indefinite"/></line></g></svg>`,
+                thunder: `<svg viewBox="0 0 64 64" width="44" height="44"><path d="M16 30 C8 30 4 24 8 18 C10 14 14 12 20 13 C22 8 28 6 34 8 C40 10 42 14 40 18 C46 18 48 24 44 28 C42 30 16 30 16 30Z" fill="#64748b" opacity="0.9"/><polygon points="30,32 24,44 32,44 28,56 40,40 32,40 36,32" fill="#fbbf24"><animate attributeName="opacity" values="1;0.3;1;0.3;1" dur="2s" repeatCount="indefinite"/></polygon></svg>`,
+                snow: `<svg viewBox="0 0 64 64" width="44" height="44"><path d="M16 32 C8 32 4 26 8 20 C10 16 14 14 20 15 C22 10 28 8 34 10 C40 12 42 16 40 20 C46 20 48 26 44 30 C42 32 16 32 16 32Z" fill="#94a3b8" opacity="0.8"/><g fill="#e2e8f0"><circle cx="18" cy="40" r="2"><animate attributeName="cy" values="36;52;36" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/></circle><circle cx="28" cy="42" r="2.5"><animate attributeName="cy" values="36;52;36" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1.6s" repeatCount="indefinite"/></circle><circle cx="38" cy="40" r="2"><animate attributeName="cy" values="36;52;36" dur="2.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="2.2s" repeatCount="indefinite"/></circle><circle cx="46" cy="42" r="1.5"><animate attributeName="cy" values="36;52;36" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1.8s" repeatCount="indefinite"/></circle></g></svg>`,
+                sleet: `<svg viewBox="0 0 64 64" width="44" height="44"><path d="M16 32 C8 32 4 26 8 20 C10 16 14 14 20 15 C22 10 28 8 34 10 C40 12 42 16 40 20 C46 20 48 26 44 30 C42 32 16 32 16 32Z" fill="#94a3b8" opacity="0.8"/><g stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="36" x2="16" y2="44"><animate attributeName="y1" values="36;46;36" dur="0.9s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="0.9s" repeatCount="indefinite"/></line><line x1="36" y1="36" x2="34" y2="44"><animate attributeName="y1" values="36;46;36" dur="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></line></g><g fill="#e2e8f0"><circle cx="27" cy="40" r="2"><animate attributeName="cy" values="36;50;36" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1.8s" repeatCount="indefinite"/></circle><circle cx="44" cy="42" r="1.5"><animate attributeName="cy" values="36;50;36" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/></circle></g></svg>`,
+                unknown: `<svg viewBox="0 0 64 64" width="44" height="44"><circle cx="32" cy="28" r="4" fill="#94a3b8"/><rect x="30" y="36" width="4" height="14" rx="2" fill="#94a3b8"/><circle cx="32" cy="56" r="3" fill="#94a3b8"/></svg>`
+            };
+            return icons[type] || icons.unknown;
+        }
+
         // SMHI weather symbol to description and icon
         function getWeatherInfo(code) {
             const weatherCodes = {
-                1: { desc: 'Klart', icon: '☀️' },
-                2: { desc: 'Lätt molnighet', icon: '🌤️' },
-                3: { desc: 'Halvklart', icon: '⛅' },
-                4: { desc: 'Molnigt', icon: '🌥️' },
-                5: { desc: 'Mulet', icon: '☁️' },
-                6: { desc: 'Mulet', icon: '☁️' },
-                7: { desc: 'Dimma', icon: '🌫️' },
-                8: { desc: 'Lätta regnskurar', icon: '🌦️' },
-                9: { desc: 'Regnskurar', icon: '🌦️' },
-                10: { desc: 'Kraftiga regnskurar', icon: '🌦️' },
-                11: { desc: 'Åskväder', icon: '⛈️' },
-                12: { desc: 'Lätta byar av regn och snö', icon: '🌨️' },
-                13: { desc: 'Byar av regn och snö', icon: '🌨️' },
-                14: { desc: 'Kraftiga byar av regn och snö', icon: '🌨️' },
-                15: { desc: 'Lätta snöbyar', icon: '🌨️' },
-                16: { desc: 'Snöbyar', icon: '🌨️' },
-                17: { desc: 'Kraftiga snöbyar', icon: '🌨️' },
-                18: { desc: 'Lätt regn', icon: '🌧️' },
-                19: { desc: 'Regn', icon: '🌧️' },
-                20: { desc: 'Kraftigt regn', icon: '🌧️' },
-                21: { desc: 'Åska', icon: '⛈️' },
-                22: { desc: 'Lätt snöblandat regn', icon: '🌨️' },
-                23: { desc: 'Snöblandat regn', icon: '🌨️' },
-                24: { desc: 'Kraftigt snöblandat regn', icon: '🌨️' },
-                25: { desc: 'Lätt snöfall', icon: '🌨️' },
-                26: { desc: 'Snöfall', icon: '❄️' },
-                27: { desc: 'Kraftigt snöfall', icon: '❄️' }
+                1: { desc: 'Klart', icon: weatherSVG('sun') },
+                2: { desc: 'Lätt molnighet', icon: weatherSVG('sunCloud') },
+                3: { desc: 'Halvklart', icon: weatherSVG('sunCloud') },
+                4: { desc: 'Molnigt', icon: weatherSVG('cloud') },
+                5: { desc: 'Mulet', icon: weatherSVG('overcast') },
+                6: { desc: 'Mulet', icon: weatherSVG('overcast') },
+                7: { desc: 'Dimma', icon: weatherSVG('fog') },
+                8: { desc: 'Lätta regnskurar', icon: weatherSVG('rain') },
+                9: { desc: 'Regnskurar', icon: weatherSVG('rain') },
+                10: { desc: 'Kraftiga regnskurar', icon: weatherSVG('heavyRain') },
+                11: { desc: 'Åskväder', icon: weatherSVG('thunder') },
+                12: { desc: 'Lätta byar av regn och snö', icon: weatherSVG('sleet') },
+                13: { desc: 'Byar av regn och snö', icon: weatherSVG('sleet') },
+                14: { desc: 'Kraftiga byar av regn och snö', icon: weatherSVG('sleet') },
+                15: { desc: 'Lätta snöbyar', icon: weatherSVG('snow') },
+                16: { desc: 'Snöbyar', icon: weatherSVG('snow') },
+                17: { desc: 'Kraftiga snöbyar', icon: weatherSVG('snow') },
+                18: { desc: 'Lätt regn', icon: weatherSVG('rain') },
+                19: { desc: 'Regn', icon: weatherSVG('rain') },
+                20: { desc: 'Kraftigt regn', icon: weatherSVG('heavyRain') },
+                21: { desc: 'Åska', icon: weatherSVG('thunder') },
+                22: { desc: 'Lätt snöblandat regn', icon: weatherSVG('sleet') },
+                23: { desc: 'Snöblandat regn', icon: weatherSVG('sleet') },
+                24: { desc: 'Kraftigt snöblandat regn', icon: weatherSVG('sleet') },
+                25: { desc: 'Lätt snöfall', icon: weatherSVG('snow') },
+                26: { desc: 'Snöfall', icon: weatherSVG('snow') },
+                27: { desc: 'Kraftigt snöfall', icon: weatherSVG('snow') }
             };
-            return weatherCodes[code] || { desc: 'Okänt', icon: '🌡️' };
+            return weatherCodes[code] || { desc: 'Okänt', icon: weatherSVG('unknown') };
         }
         
         // Fetch 3-day forecast from SMHI
@@ -3463,18 +3640,22 @@
         function showDayInfo(dayCell, date, month, year) {
             const holiday = getHoliday(year, month, date);
             const themeDay = getThemeDay(year, month, date);
-
-            if (!holiday && !themeDay) return;
-
             const dateObj = new Date(year, month, date);
-            const dayNames = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
-            const monthNames = ['januari', 'februari', 'mars', 'april', 'maj', 'juni',
+            const namedayKey = formatDateKey(month, date);
+            const dayNamedays = namedays[namedayKey] || [];
+
+            const dayNamesLocal = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
+            const monthNamesLocal = ['januari', 'februari', 'mars', 'april', 'maj', 'juni',
                                'juli', 'augusti', 'september', 'oktober', 'november', 'december'];
 
-            const dateStr = `${dayNames[dateObj.getDay()]} ${date} ${monthNames[month]} ${year}`;
+            const dateStr = `${dayNamesLocal[dateObj.getDay()]} ${date} ${monthNamesLocal[month]} ${year}`;
 
             let infoHtml = '';
+            if (dayNamedays.length > 0) {
+                infoHtml += `<span class="nameday-text">🎂 ${dayNamedays.join(', ')}</span>`;
+            }
             if (holiday) {
+                if (infoHtml) infoHtml += '<br>';
                 infoHtml += `<span class="holiday-text">🔴 ${holiday}</span>`;
             }
             if (themeDay) {
@@ -3489,7 +3670,7 @@
             clearTimeout(popupTimeout);
             popupTimeout = setTimeout(() => {
                 dayInfoPopup.classList.remove('show');
-            }, 3000);
+            }, 4000);
         }
 
         // Lägg till klick-handler på kalendern
